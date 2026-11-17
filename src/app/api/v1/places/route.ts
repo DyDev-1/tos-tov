@@ -1,5 +1,6 @@
-import { jsonData, jsonError, PLACES_CACHE, readJson, banned, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, PLACES_CACHE, readJson, banned, featureClosed, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
+import { featureAllowed } from "@/lib/release-stage";
 import { createPlace } from "@/lib/services/place-submissions";
 import { listPlaces } from "@/lib/services/places";
 import { createPlaceInputSchema } from "@/lib/validation/place-input";
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
     if (user.bannedAt) return banned();
+    if (!featureAllowed("addPlace", user)) return featureClosed();
 
     const parsed = createPlaceInputSchema.safeParse(await readJson(request));
     if (!parsed.success) {

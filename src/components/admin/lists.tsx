@@ -253,7 +253,7 @@ export function ReportsAdminList({
 export function UsersAdminList({
   items,
 }: {
-  items: { id: number; name: string; email: string | null; role: "user" | "admin"; bannedAt: string | null; bannedReason: string | null; createdAt: string }[];
+  items: { id: number; name: string; email: string | null; role: "user" | "admin"; trusted: boolean; bannedAt: string | null; bannedReason: string | null; createdAt: string }[];
 }) {
   const t = useTranslations("Admin");
   const locale = useLocale() as Locale;
@@ -271,11 +271,26 @@ export function UsersAdminList({
               <p className="truncate text-muted-foreground">{user.email ?? t("common.anonymous")}</p>
               <p className="text-sm text-muted-foreground">{t("users.joined", { date: formatDate(user.createdAt, locale) })}</p>
             </div>
-            {user.bannedAt && <StatusBadge status="banned" />}
+            <div className="flex flex-col items-end gap-1">
+              {user.bannedAt && <StatusBadge status="banned" />}
+              {user.trusted && !user.bannedAt && (
+                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">{t("users.trusted")}</span>
+              )}
+            </div>
           </div>
           {user.bannedAt && user.bannedReason && <p className="mt-2 text-destructive">{t("users.bannedFor", { reason: user.bannedReason })}</p>}
           {user.role !== "admin" && (
-            <div className="mt-3">
+            <div className="mt-3 space-y-3">
+              {!user.bannedAt && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {user.trusted ? (
+                    <AdminAction label={t("users.removeTrust")} endpoint={api(`users/${user.id}/trust`)} method="DELETE" />
+                  ) : (
+                    <AdminAction label={t("users.makeTrusted")} endpoint={api(`users/${user.id}/trust`)} />
+                  )}
+                  <span className="text-sm text-muted-foreground">{t("users.trustHelp")}</span>
+                </div>
+              )}
               {user.bannedAt ? (
                 <AdminAction label={t("actions.unban")} endpoint={api(`users/${user.id}/ban`)} method="DELETE" />
               ) : (

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   date,
   foreignKey,
@@ -59,6 +60,8 @@ export const users = pgTable("users", {
   name: text().notNull(),
   email: text(),
   role: userRole().notNull().default("user"),
+  // A trusted person's posts and places are published at once (release stage 4). Set by an admin.
+  trusted: boolean().notNull().default(false),
   // Set when an admin bans the person. A banned person can still read, but cannot post, comment, like or upload.
   bannedAt: timestamp("banned_at", { withTimezone: true }),
   bannedReason: text("banned_reason"),

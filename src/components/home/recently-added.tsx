@@ -4,6 +4,7 @@ import { PlaceRow } from "@/components/places/place-row";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { timeAgo } from "@/lib/dates";
+import { getReleaseStage, stageAllows } from "@/lib/release-stage";
 import { pickText } from "@/lib/i18n-content";
 import { listPlaces } from "@/lib/services/places";
 import { listPlacesQuerySchema } from "@/lib/validation/places";
@@ -58,12 +59,14 @@ export async function RecentlyAdded({ locale }: { locale: Locale }) {
             >
               {t("seeMore")}
             </Link>
+            {stageAllows(getReleaseStage(), "sharePost") && (
             <Link
               href="/share"
               className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-primary px-6 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 md:w-auto"
             >
               {t("share")}
             </Link>
+            )}
           </div>
         </>
       )}

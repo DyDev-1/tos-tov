@@ -53,6 +53,37 @@ table rights away from Supabase's `anon` and `authenticated` roles. So even if s
 API key, they would see no rows. The app connects as the database owner, which is not affected.
 `npm run db:check` verifies this, and a test fails if a new table forgets row-level security.
 
+## Release stages
+
+The same code runs in every stage (claude.md, "Release stages"). One setting decides what is open to the public.
+Set `RELEASE_STAGE` in the host's environment and redeploy to move to the next stage.
+
+| Stage | What is open |
+| --- | --- |
+| **1** | Admin-posted places only. Visitors browse, search, use the map, like, save and report. |
+| **2** | Also comments. |
+| **3** | Also sharing posts and adding places. They wait for an admin to approve them. |
+| **4** | Also **trusted people** publish places and posts at once (an admin marks a person as trusted under Admin > People). |
+
+- **Admins can always do everything**, in every stage. That is how the first 100 to 200 places get added in stage 1.
+- If `RELEASE_STAGE` is empty, **production runs stage 1** (the safest) and development, tests and CI run stage 4.
+- `GET /api/v1/features` tells you the stage and what is open. The server refuses closed features with
+  `403 feature_closed`, and the screens hide them. A banned person cannot write in any stage.
+- Not built, on purpose: "users add photos" and "suggested edits" from stage 2. They are not in the MVP list.
+
+## Admin
+
+Admins see an **Admin** link in the header. To make someone an admin, set their `role` to `admin` in the
+database (there is deliberately no screen for it):
+
+```sql
+update users set role = 'admin' where email = 'you@example.com';
+```
+
+The person must have logged in once first, so their row exists. Admin pages are under `/admin` and the
+API under `/api/v1/admin/...`. Every admin page and route checks the role on the server, and every change
+is written to the activity log.
+
 ### Clerk settings (in the Clerk dashboard)
 
 The sign up form shows what you switch on under **Configure → User & authentication**:
@@ -74,7 +105,7 @@ the form explains that uploads are not set up yet.
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Generate route types, then TypeScript check |
 | `npm test` | Unit tests (Vitest) |
-| `npm run test:e2e` | Browser tests (Playwright; run `npm run build` first) |
+| `npm run test:e2e` | Browser tests (Playwright; run `npm run build` first). Starts the app twice: at stage 4 and at stage 1 |
 | `npm run db:up` | Start PostgreSQL + PostGIS in Docker |
 | `npm run db:generate` | Create a migration from `src/db/schema.ts` |
 | `npm run db:migrate` | Apply migrations |

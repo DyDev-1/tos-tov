@@ -1,5 +1,6 @@
-import { jsonData, jsonError, readJson, banned, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, readJson, banned, featureClosed, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
+import { featureAllowed } from "@/lib/release-stage";
 import { createUploadLink, getR2Config } from "@/lib/r2";
 import { uploadRequestSchema } from "@/lib/validation/place-input";
 
@@ -11,6 +12,8 @@ export async function POST(request: Request) {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
     if (user.bannedAt) return banned();
+    // Photos are only uploaded when adding a place or sharing a post.
+    if (!featureAllowed("addPlace", user) && !featureAllowed("sharePost", user)) return featureClosed();
 
     const parsed = uploadRequestSchema.safeParse(await readJson(request));
     if (!parsed.success) {

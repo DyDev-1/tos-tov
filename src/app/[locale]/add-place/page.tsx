@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AddPlaceForm } from "@/components/add-place/add-place-form";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { getReleaseStage, stageAllows } from "@/lib/release-stage";
 import { listCategories, listProvinces } from "@/lib/services/reference";
 
 // Add a place: one column, 720 px wide on desktop. Needs login (the form shows a login prompt otherwise,
@@ -34,9 +35,13 @@ export default async function AddPlacePage({ params }: PageProps<"/[locale]/add-
         </Link>
       </div>
       <p className="mt-2 text-muted-foreground">{t("intro")}</p>
-      <Link href="/share" className="mt-2 mb-8 inline-flex min-h-11 items-center font-semibold text-laterite underline-offset-4 hover:underline">
-        {t("linkToShare")}
-      </Link>
+      {stageAllows(getReleaseStage(), "sharePost") ? (
+        <Link href="/share" className="mt-2 mb-8 inline-flex min-h-11 items-center font-semibold text-laterite underline-offset-4 hover:underline">
+          {t("linkToShare")}
+        </Link>
+      ) : (
+        <div className="mb-8" />
+      )}
       {lists ? (
         <AddPlaceForm provinces={lists.provinces} categories={lists.categories} />
       ) : (

@@ -3,6 +3,7 @@ import { and, count, desc, eq, gt, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { photos, places, posts, users, type UserRow } from "@/db/schema";
 import { publicPhotoBase } from "@/lib/r2";
+import { publishesWithoutApproval } from "@/lib/release-stage";
 import type { CreatePostInput, Post, RatingSummary } from "@/lib/validation/posts";
 
 // Posts: people's experiences of a place. CLAUDE.md rules this follows:
@@ -44,7 +45,7 @@ export async function createPost(user: UserRow, slug: string, input: CreatePostI
     if (!base || !input.photos.every((url) => url.startsWith(`${base}/`))) return { ok: false, reason: "invalid_photos" };
   }
 
-  const status = isAdmin ? "published" : "pending";
+  const status = publishesWithoutApproval(user) ? "published" : "pending";
   const created = await db.transaction(async (tx) => {
     const [post] = await tx
       .insert(posts)

@@ -551,6 +551,7 @@ export async function listAdminUsers(query: AdminListQuery & { status?: "banned"
       name: u.name,
       email: u.email,
       role: u.role,
+      trusted: u.trusted,
       bannedAt: u.bannedAt?.toISOString() ?? null,
       bannedReason: u.bannedReason,
       createdAt: u.createdAt.toISOString(),
@@ -566,7 +567,8 @@ export async function banUser(admin: UserRow, id: number, reason: string): Promi
     if (!user) return { ok: false, reason: "not_found" };
     if (user.role === "admin") return { ok: false, reason: "cannot_ban_admin" };
     if (user.bannedAt) return { ok: false, reason: "already_banned" };
-    await tx.update(users).set({ bannedAt: sql`now()`, bannedReason: reason, updatedAt: sql`now()` }).where(eq(users.id, id));
+    // A banned person also loses their trusted status.
+    await tx.update(users).set({ bannedAt: sql`now()`, bannedReason: reason, trusted: false, updatedAt: sql`now()` }).where(eq(users.id, id));
     await log(tx, admin, "user.ban", "user", id, { reason });
     return ok();
   });
@@ -579,6 +581,25 @@ export async function unbanUser(admin: UserRow, id: number): Promise<Result> {
     if (!user.bannedAt) return { ok: false, reason: "not_banned" };
     await tx.update(users).set({ bannedAt: null, bannedReason: null, updatedAt: sql`now()` }).where(eq(users.id, id));
     await log(tx, admin, "user.unban", "user", id);
+    return ok();
+  });
+}
+
+// Trusted people publish places and posts without waiting (release stage 4). Admins already do, and a
+// banned person cannot be trusted.
+export async function setUserTrusted(admin: UserRow, id: number, trusted: boolean): Promise<Result> {
+  return db.transaction(async (tx) => {
+    const [user] = await tx.select({ id: users.id, role: users.role, bannedAt: users.bannedAt, trusted: users.trusted }).from(users).where(eq(users.id, id)).for("update");
+    if (!user) return { ok: false, reason: "not_found" };
+    if (trusted) {
+      if (user.role === "admin") return { ok: false, reason: "cannot_trust_admin" };
+      if (user.bannedAt) return { ok: false, reason: "user_banned" };
+      if (user.trusted) return { ok: false, reason: "already_trusted" };
+    } else if (!user.trusted) {
+      return { ok: false, reason: "not_trusted" };
+    }
+    await tx.update(users).set({ trusted, updatedAt: sql`now()` }).where(eq(users.id, id));
+    await log(tx, admin, trusted ? "user.trust" : "user.untrust", "user", id);
     return ok();
   });
 }

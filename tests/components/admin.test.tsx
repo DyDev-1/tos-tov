@@ -249,7 +249,7 @@ describe("ReportsAdminList", () => {
 });
 
 describe("UsersAdminList and BanControl", () => {
-  const person = (id: number, extra = {}) => ({ id, name: `Person ${id}`, email: `p${id}@example.com`, role: "user" as const, bannedAt: null as string | null, bannedReason: null as string | null, createdAt: "2026-10-01T00:00:00.000Z", ...extra });
+  const person = (id: number, extra = {}) => ({ id, name: `Person ${id}`, email: `p${id}@example.com`, role: "user" as const, trusted: false, bannedAt: null as string | null, bannedReason: null as string | null, createdAt: "2026-10-01T00:00:00.000Z", ...extra });
 
   it("shows an admin without a ban control, and a banned person with their reason and Lift ban", async () => {
     const user = userEvent.setup();
@@ -615,7 +615,7 @@ describe("Khmer admin", () => {
         <PlacesAdminList items={[row, { ...row, id: 2, status: "published" }, { ...row, id: 3, status: "hidden" }]} />
         <PostsAdminList items={[{ id: 1, status: "pending", rating: 5, story: "Story", visitedAt: "2026-11-01", createdAt: "2026-11-02T00:00:00.000Z", author: { name: "A" }, place: { slug: "x", name: name("X") } }]} />
         <ReportsAdminList items={[{ id: 1, reason: "unsafe", message: null, status: "open", createdAt: "2026-11-02T00:00:00.000Z", reporter: { name: "S" }, place: { id: 1, slug: "x", name: name("X"), status: "published" } }]} />
-        <UsersAdminList items={[{ id: 1, name: "U", email: null, role: "user", bannedAt: null, bannedReason: null, createdAt: "2026-10-01T00:00:00.000Z" }]} />
+        <UsersAdminList items={[{ id: 1, name: "U", email: null, role: "user", trusted: false, bannedAt: null, bannedReason: null, createdAt: "2026-10-01T00:00:00.000Z" }]} />
         <LogList items={[{ id: 1, action: "user.ban", target: { type: "user", id: 1 }, details: { reason: "x" }, admin: { name: "A" }, createdAt: "2026-11-02T00:00:00.000Z" }]} />
         <CategoryManager categories={[{ id: 1, slug: "temples", name: name("Temples"), sortOrder: 1, placeCount: 0 }]} />
         <GuideManager placeId={1} guides={[]} />

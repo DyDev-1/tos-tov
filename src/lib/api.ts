@@ -33,3 +33,6 @@ export const unauthorized = () => jsonError(401, "unauthorized", "Please log in 
 export const forbidden = () => jsonError(403, "forbidden", "You are not allowed to do this");
 // A banned person can still read the site, but cannot post, comment, like, save, report or upload.
 export const banned = () => jsonError(403, "banned", "Your account has been suspended");
+
+// The feature exists but is not open yet at the current release stage.
+export const featureClosed = () => jsonError(403, "feature_closed", "This feature is not open yet");

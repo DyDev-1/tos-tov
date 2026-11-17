@@ -5,10 +5,12 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AddPlaceFab } from "@/components/shell/add-place-fab";
+import { FeaturesProvider } from "@/components/shell/features-provider";
 import { BottomTabBar } from "@/components/shell/bottom-tab-bar";
 import { SiteHeader } from "@/components/shell/site-header";
 import { clerkProviderAppearance } from "@/lib/clerk-appearance";
 import { clerkKhmer } from "@/lib/clerk-km";
+import { getReleaseStage } from "@/lib/release-stage";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -54,6 +56,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       >
         <body className="flex min-h-full flex-col">
           <NextIntlClientProvider>
+            <FeaturesProvider stage={getReleaseStage()}>
             <a
               href="#content"
               className="sr-only z-50 rounded-full bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
@@ -67,6 +70,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
             </div>
             <BottomTabBar />
             <AddPlaceFab />
+            </FeaturesProvider>
           </NextIntlClientProvider>
         </body>
       </html>

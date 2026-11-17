@@ -13,6 +13,7 @@ import { POST as postPlaceStatus } from "@/app/api/v1/admin/places/[id]/status/r
 import { GET as getAdminPlaces } from "@/app/api/v1/admin/places/route";
 import { GET as getAdminUsers } from "@/app/api/v1/admin/users/route";
 import { DELETE as unbanRoute, POST as banRoute } from "@/app/api/v1/admin/users/[id]/ban/route";
+import { DELETE as untrustRoute, POST as trustRoute } from "@/app/api/v1/admin/users/[id]/trust/route";
 import { places, users, type UserRow } from "@/db/schema";
 import * as auth from "@/lib/auth";
 import { createTestAdmin, createTestUser, db, resetAndSeedPlaces } from "../support/db";
@@ -38,7 +39,7 @@ describe("every admin route checks the role on the server", () => {
   const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 
   it("finds all the admin routes (so this test cannot pass by finding none)", () => {
-    expect(Object.keys(routes).length).toBeGreaterThanOrEqual(19);
+    expect(Object.keys(routes).length).toBeGreaterThanOrEqual(20);
   });
 
   for (const [path, load] of Object.entries(routes)) {
@@ -206,5 +207,20 @@ describe("banning", () => {
     expect((await banRoute(req("POST", { reason: "No reason" }), ctx(other.id))).status).toBe(403);
     expect((await banRoute(req("POST", { reason: "No reason" }), ctx(admin.id))).status).toBe(403);
     expect((await banRoute(req("POST", { reason: "Nobody" }), ctx(99999))).status).toBe(404);
+  });
+});
+
+describe("trusting people", () => {
+  it("trusts and untrusts, and explains each refusal", async () => {
+    const user = await createTestUser("Sophea");
+    expect((await trustRoute(req("POST"), ctx(user.id))).status).toBe(200);
+    const again = await trustRoute(req("POST"), ctx(user.id));
+    expect(again.status).toBe(409);
+    expect((await again.json()).error.code).toBe("already_trusted");
+    expect((await untrustRoute(req("DELETE"), ctx(user.id))).status).toBe(200);
+    expect((await untrustRoute(req("DELETE"), ctx(user.id))).status).toBe(409);
+    expect((await trustRoute(req("POST"), ctx(99999))).status).toBe(404);
+    expect((await trustRoute(req("POST"), ctx(admin.id))).status).toBe(409);
+    expect((await trustRoute(req("POST"), ctx("abc"))).status).toBe(400);
   });
 });

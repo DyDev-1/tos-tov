@@ -163,7 +163,8 @@
       "loadMore": "Show more comments",
       "logIn": "Log in to comment",
       "error": "Could not post your comment. Please try again.",
-      "rateLimited": "You are commenting too fast. Please wait a minute."
+      "rateLimited": "You are commenting too fast. Please wait a minute.",
+      "closed": "Comments will open soon."
     }
   },
   "NotFound": {
@@ -318,7 +319,13 @@
       "home": "Back to Explore",
       "another": "Add another place"
     },
-    "linkToShare": "Already on the list? Share your experience instead"
+    "linkToShare": "Already on the list? Share your experience instead",
+    "closed": {
+      "title": "Adding places is not open yet",
+      "body": "For now our team adds the places. You will be able to add your own soon.",
+      "back": "Back to Explore",
+      "team": "Team member? Log in"
+    }
   },
   "Saved": {
     "signedOutTitle": "Log in to see your saved places",
@@ -403,6 +410,12 @@
       "home": "Back to Explore",
       "another": "Share another experience",
       "shareTitle": "Tell your friends about this place"
+    },
+    "closed": {
+      "title": "Sharing is not open yet",
+      "body": "You will be able to share your experiences soon.",
+      "back": "Back to Explore",
+      "team": "Team member? Log in"
     }
   },
   "ShareMenu": {
@@ -489,7 +502,12 @@
       "cannot_ban_yourself": "You cannot ban yourself.",
       "already_banned": "This person is already banned.",
       "not_banned": "This person is not banned.",
-      "internal_error": "Something went wrong. Please try again."
+      "internal_error": "Something went wrong. Please try again.",
+      "cannot_trust_admin": "Admins already publish without approval.",
+      "user_banned": "A banned person cannot be trusted.",
+      "already_trusted": "This person is already trusted.",
+      "not_trusted": "This person is not trusted.",
+      "feature_closed": "This feature is not open yet."
     },
     "overview": {
       "title": "Overview",
@@ -603,7 +621,11 @@
       "reasonLabel": "Reason for the ban",
       "reasonPlaceholder": "For example: posting spam",
       "banConfirm": "Ban {name}?",
-      "banHelp": "A banned person can still read the site, but cannot post, comment, like, save or upload."
+      "banHelp": "A banned person can still read the site, but cannot post, comment, like, save or upload.",
+      "trusted": "Trusted",
+      "makeTrusted": "Make trusted",
+      "removeTrust": "Remove trust",
+      "trustHelp": "Trusted people publish places and experiences without waiting (release stage 4)."
     },
     "log": {
       "title": "Activity log",
@@ -632,7 +654,9 @@
       "guide_create": "Added a guide",
       "guide_update": "Edited a guide",
       "guide_delete": "Deleted a guide",
-      "photo_delete": "Deleted a photo"
+      "photo_delete": "Deleted a photo",
+      "user_trust": "Made a person trusted",
+      "user_untrust": "Removed a person's trust"
     }
   }
 }

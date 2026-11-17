@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { categories, photos, places, provinces, type UserRow } from "@/db/schema";
 import { localizeInput, slugify } from "@/lib/i18n-content";
 import { publicPhotoBase } from "@/lib/r2";
+import { publishesWithoutApproval } from "@/lib/release-stage";
 import type { PlaceDetails } from "@/lib/validation/place-details";
 import type { CreatePlaceInput } from "@/lib/validation/place-input";
 
@@ -81,7 +82,8 @@ export async function createPlace(user: UserRow, input: CreatePlaceInput): Promi
   const whatToBring = localizeInput(input.whatToBring);
   const details: PlaceDetails = whatToBring ? { whatToBring } : {};
   const slug = await uniqueSlug(input.name);
-  const status = isAdmin ? "published" : "pending";
+  // Admins publish at once. At release stage 4 so do trusted people. Everyone else waits for an admin.
+  const status = publishesWithoutApproval(user) ? "published" : "pending";
 
   const created = await db.transaction(async (tx) => {
     const [place] = await tx

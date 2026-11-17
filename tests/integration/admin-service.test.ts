@@ -23,6 +23,7 @@ import {
   setCommentStatus,
   setPlaceStatus,
   setPostStatus,
+  setUserTrusted,
   unbanUser,
   updateCategory,
   updateGuide,
@@ -368,7 +369,7 @@ describe("users", () => {
 
   it("does not show Clerk ids or other internals", async () => {
     const { items } = await listAdminUsers(list);
-    expect(Object.keys(items[0]).sort()).toEqual(["bannedAt", "bannedReason", "createdAt", "email", "id", "name", "role"]);
+    expect(Object.keys(items[0]).sort()).toEqual(["bannedAt", "bannedReason", "createdAt", "email", "id", "name", "role", "trusted"]);
   });
 
   it("bans and unbans a person, with a reason in the log", async () => {
@@ -395,6 +396,39 @@ describe("users", () => {
     expect(await unbanUser(admin, other.id)).toEqual({ ok: false, reason: "not_banned" });
     expect(await unbanUser(admin, 99999)).toEqual({ ok: false, reason: "not_found" });
     expect(await actions()).toEqual(["user.ban"]);
+  });
+});
+
+describe("trusted people", () => {
+  it("makes a person trusted and takes it away, with a log line each time", async () => {
+    const user = await createTestUser("Sophea");
+    expect(await setUserTrusted(admin, user.id, true)).toEqual({ ok: true });
+    expect((await listAdminUsers(list)).items.find((u) => u.id === user.id)!.trusted).toBe(true);
+    expect(await setUserTrusted(admin, user.id, false)).toEqual({ ok: true });
+    expect((await listAdminUsers(list)).items.find((u) => u.id === user.id)!.trusted).toBe(false);
+    expect(await actions()).toEqual(["user.trust", "user.untrust"]);
+  });
+
+  it("refuses the wrong cases and writes no log line", async () => {
+    const user = await createTestUser();
+    const otherAdmin = await createTestAdmin("Other");
+    expect(await setUserTrusted(admin, otherAdmin.id, true)).toEqual({ ok: false, reason: "cannot_trust_admin" });
+    expect(await setUserTrusted(admin, user.id, false)).toEqual({ ok: false, reason: "not_trusted" });
+    await setUserTrusted(admin, user.id, true);
+    expect(await setUserTrusted(admin, user.id, true)).toEqual({ ok: false, reason: "already_trusted" });
+    expect(await setUserTrusted(admin, 99999, true)).toEqual({ ok: false, reason: "not_found" });
+    await banUser(admin, (await createTestUser("Banned")).id, "Spam");
+    const [banned] = await db.select().from(users).where(eq(users.name, "Banned"));
+    expect(await setUserTrusted(admin, banned.id, true)).toEqual({ ok: false, reason: "user_banned" });
+    expect(await actions()).toEqual(["user.trust", "user.ban"]);
+  });
+
+  it("a ban also removes the trust", async () => {
+    const user = await createTestUser();
+    await setUserTrusted(admin, user.id, true);
+    await banUser(admin, user.id, "Spam");
+    const [row] = await db.select().from(users).where(eq(users.id, user.id));
+    expect(row.trusted).toBe(false);
   });
 });
 

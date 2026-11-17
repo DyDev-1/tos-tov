@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import type { Locale } from "@/i18n/routing";
 import { apiFetch } from "@/lib/client-api";
+import { useFeature } from "@/components/shell/features-provider";
 import { timeAgo } from "@/lib/dates";
 import type { Comment } from "@/lib/validation/engagement";
 
@@ -23,6 +24,7 @@ export function CommentsSection({
   const locale = useLocale() as Locale;
   const { isSignedIn } = useAuth();
   const clerk = useClerk();
+  const commenting = useFeature("comment");
   const [items, setItems] = useState(initialComments);
   const [total, setTotal] = useState(initialTotal);
   const [body, setBody] = useState("");
@@ -88,6 +90,10 @@ export function CommentsSection({
         </button>
       )}
 
+      {commenting.ready && !commenting.allowed && (
+        <p className="mt-4 rounded-2xl bg-secondary p-4 text-muted-foreground">{t("closed")}</p>
+      )}
+      {commenting.allowed && (
       <form onSubmit={post} className="mt-4 flex gap-2">
         <label className="min-w-0 flex-1">
           <span className="sr-only">{t("label")}</span>
@@ -107,6 +113,7 @@ export function CommentsSection({
           {status === "posting" ? t("posting") : t("post")}
         </button>
       </form>
+      )}
       {(status === "error" || status === "rate_limited") && (
         <p role="alert" className="mt-2 text-sm text-destructive">
           {status === "rate_limited" ? t("rateLimited") : t("error")}

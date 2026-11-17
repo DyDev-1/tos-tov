@@ -36,7 +36,7 @@ describe("admin pages", () => {
 
   it("every admin API route uses withAdmin, which checks the role first", () => {
     const routes = files("src/app/api/v1/admin", "route.ts");
-    expect(routes.length).toBeGreaterThanOrEqual(19);
+    expect(routes.length).toBeGreaterThanOrEqual(20);
     for (const path of routes) expect(readFileSync(path, "utf8"), path).toContain("withAdmin(");
   });
 });

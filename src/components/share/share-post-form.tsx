@@ -6,6 +6,8 @@ import { useRef, useState } from "react";
 import { PhotoPicker } from "@/components/add-place/photo-picker";
 import { usePhotoUploads } from "@/components/photos/use-photo-uploads";
 import { StarInput } from "@/components/posts/star-input";
+import { FeatureClosed } from "@/components/shell/feature-closed";
+import { useFeature } from "@/components/shell/features-provider";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { apiFetch } from "@/lib/client-api";
@@ -25,6 +27,7 @@ export function SharePostForm({ preselected, today }: { preselected: PickedPlace
   const t = useTranslations("Share");
   const locale = useLocale() as Locale;
   const { isLoaded, isSignedIn } = useAuth();
+  const feature = useFeature("sharePost");
   const uploads = usePhotoUploads();
 
   const [place, setPlace] = useState<PickedPlace | null>(preselected);
@@ -106,6 +109,9 @@ export function SharePostForm({ preselected, today }: { preselected: PickedPlace
     );
   }
 
+  // Not open yet at this release stage: say so (admins can still log in and use it).
+  if (!isSignedIn && !feature.allowed) return <FeatureClosed namespace="Share" loginHref={{ pathname: "/sign-in", query: { redirect_url: `/${locale}/share` } }} />;
+
   if (!isSignedIn) {
     const next = `/${locale}/share${preselected ? `?place=${preselected.slug}` : ""}`;
     return (
@@ -129,6 +135,16 @@ export function SharePostForm({ preselected, today }: { preselected: PickedPlace
       </div>
     );
   }
+
+  if (!feature.ready) {
+    return (
+      <div role="status" aria-busy="true" className="space-y-4">
+        <span className="sr-only">{t("loginGate.loading")}</span>
+        <div className="h-24 animate-pulse rounded-2xl bg-muted" />
+      </div>
+    );
+  }
+  if (!feature.allowed) return <FeatureClosed namespace="Share" />;
 
   if (done) {
     return (

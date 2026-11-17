@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "trusted" boolean DEFAULT false NOT NULL;

@@ -33,6 +33,10 @@ const STATUS: Record<string, [number, string]> = {
   cannot_ban_yourself: [403, "You cannot ban yourself"],
   already_banned: [409, "This person is already banned"],
   not_banned: [409, "This person is not banned"],
+  cannot_trust_admin: [409, "Admins already publish without approval"],
+  user_banned: [409, "A banned person cannot be trusted"],
+  already_trusted: [409, "This person is already trusted"],
+  not_trusted: [409, "This person is not trusted"],
 };
 
 export function toResponse(result: Result | Result<{ id: number }>, successStatus = 200): Response {

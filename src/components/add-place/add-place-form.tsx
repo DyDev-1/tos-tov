@@ -3,6 +3,8 @@
 import { useAuth } from "@clerk/nextjs";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { FeatureClosed } from "@/components/shell/feature-closed";
+import { useFeature } from "@/components/shell/features-provider";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { apiFetch } from "@/lib/client-api";
@@ -85,6 +87,7 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
   const t = useTranslations("AddPlace");
   const locale = useLocale() as Locale;
   const { isLoaded, isSignedIn } = useAuth();
+  const feature = useFeature("addPlace");
 
   const [fields, setFields] = useState<Fields>(EMPTY);
   const uploads = usePhotoUploads();
@@ -215,6 +218,9 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
     );
   }
 
+  // Not open yet at this release stage: say so (admins can still log in and use it).
+  if (!isSignedIn && !feature.allowed) return <FeatureClosed namespace="AddPlace" loginHref={{ pathname: "/sign-in", query: { redirect_url: `/${locale}/add-place` } }} />;
+
   if (!isSignedIn) {
     return (
       <div className="rounded-3xl bg-secondary p-6">
@@ -237,6 +243,16 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
       </div>
     );
   }
+
+  if (!feature.ready) {
+    return (
+      <div role="status" aria-busy="true" className="space-y-4">
+        <span className="sr-only">{t("loginGate.loading")}</span>
+        <div className="h-24 animate-pulse rounded-2xl bg-muted" />
+      </div>
+    );
+  }
+  if (!feature.allowed) return <FeatureClosed namespace="AddPlace" />;
 
   if (done) {
     return (

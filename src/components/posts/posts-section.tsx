@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { useFeature } from "@/components/shell/features-provider";
 import { Link } from "@/i18n/navigation";
 import { apiFetch } from "@/lib/client-api";
 import type { Post, RatingSummary } from "@/lib/validation/posts";
@@ -24,6 +25,7 @@ export function PostsSection({
 }) {
   const t = useTranslations("Posts");
   const locale = useLocale();
+  const sharing = useFeature("sharePost");
   const [items, setItems] = useState(initialPosts);
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -53,12 +55,14 @@ export function PostsSection({
             <p className="mt-1 text-muted-foreground">{t("noRating")}</p>
           )}
         </div>
-        <Link
-          href={{ pathname: "/share", query: { place: slug } }}
-          className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary/90"
-        >
-          {t("share")}
-        </Link>
+        {sharing.allowed && (
+          <Link
+            href={{ pathname: "/share", query: { place: slug } }}
+            className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            {t("share")}
+          </Link>
+        )}
       </div>
 
       {items.length === 0 ? (

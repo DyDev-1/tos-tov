@@ -4,12 +4,16 @@ import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isAuthPath, isNavActive } from "@/lib/nav";
+import { useFeature } from "./features-provider";
 
 // Floating laterite "Add a place" button. Sits above the tab bar on phone, bottom-right on desktop.
 // Hidden where it would get in the way: on the map (it covers the place card) and on the form itself.
 export function AddPlaceFab() {
   const t = useTranslations("Shell");
   const pathname = usePathname();
+  // Not shown until adding places is open (release stage 3), except to admins.
+  const { allowed } = useFeature("addPlace");
+  if (!allowed) return null;
   if (isNavActive(pathname, "/map") || isNavActive(pathname, "/add-place") || isNavActive(pathname, "/share") || isAuthPath(pathname)) return null;
 
   return (

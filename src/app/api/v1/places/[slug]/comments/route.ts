@@ -1,5 +1,6 @@
-import { jsonData, jsonError, readJson, banned, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, readJson, banned, featureClosed, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
+import { featureAllowed } from "@/lib/release-stage";
 import { addComment, listComments } from "@/lib/services/engagement";
 import { commentInputSchema, listCommentsQuerySchema } from "@/lib/validation/engagement";
 
@@ -30,6 +31,7 @@ export async function POST(request: Request, ctx: Ctx) {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
     if (user.bannedAt) return banned();
+    if (!featureAllowed("comment", user)) return featureClosed();
 
     const parsed = commentInputSchema.safeParse(await readJson(request));
     if (!parsed.success) {
