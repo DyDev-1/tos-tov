@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../src/db/schema";
-import { seed } from "../src/db/seed";
+import { seed, seedSamplePlaces } from "../src/db/seed";
 
 config({ path: ".env.local" });
 
@@ -13,8 +13,10 @@ if (!url) throw new Error("DATABASE_URL is not set");
 async function main(databaseUrl: string) {
   const client = postgres(databaseUrl, { max: 1 });
   try {
-    await seed(drizzle(client, { schema }));
-    console.log("Seeded provinces and categories.");
+    const db = drizzle(client, { schema });
+    await seed(db);
+    await seedSamplePlaces(db);
+    console.log("Seeded provinces, categories and sample places.");
   } finally {
     await client.end();
   }
