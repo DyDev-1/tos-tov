@@ -81,7 +81,7 @@ const callsTo = (url: string) => calls.filter((c) => c.url === url || c.url.star
 
 function renderForm() {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
+    <NextIntlClientProvider locale="en" messages={messages} onError={(error) => { throw error; }}>
       <AddPlaceForm provinces={provinces} categories={categories} />
     </NextIntlClientProvider>,
   );

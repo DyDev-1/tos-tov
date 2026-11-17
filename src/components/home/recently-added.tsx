@@ -51,12 +51,20 @@ export async function RecentlyAdded({ locale }: { locale: Locale }) {
               );
             })}
           </ul>
-          <Link
-            href="/map"
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full border-2 border-primary px-6 font-semibold text-primary transition-colors hover:bg-secondary md:w-auto"
-          >
-            {t("seeMore")}
-          </Link>
+          <div className="mt-6 flex flex-col gap-3 md:flex-row">
+            <Link
+              href="/map"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-full border-2 border-primary px-6 font-semibold text-primary transition-colors hover:bg-secondary md:w-auto"
+            >
+              {t("seeMore")}
+            </Link>
+            <Link
+              href="/share"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-primary px-6 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 md:w-auto"
+            >
+              {t("share")}
+            </Link>
+          </div>
         </>
       )}
     </SectionShell>

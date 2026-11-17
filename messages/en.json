@@ -45,7 +45,8 @@
       "seeMore": "See more new places",
       "empty": "No new places yet.",
       "error": "We couldn't load the new places. Please try again.",
-      "loading": "Loading new places…"
+      "loading": "Loading new places…",
+      "share": "Share your experience"
     }
   },
   "Shell": {
@@ -315,7 +316,8 @@
       "view": "View the place",
       "home": "Back to Explore",
       "another": "Add another place"
-    }
+    },
+    "linkToShare": "Already on the list? Share your experience instead"
   },
   "Saved": {
     "signedOutTitle": "Log in to see your saved places",
@@ -324,5 +326,93 @@
     "emptyHint": "Open a place and tap Save, and it will show up here.",
     "explore": "Explore places",
     "count": "{count, plural, one {# saved place} other {# saved places}}"
+  },
+  "Posts": {
+    "title": "Experiences",
+    "ratingSummary": "{average} out of 5 · {count, plural, one {# post} other {# posts}}",
+    "noRating": "No ratings yet",
+    "ratedAria": "Rated {rating} out of 5",
+    "visited": "Visited {date}",
+    "empty": "No experiences shared yet. Be the first to share yours.",
+    "loadMore": "Show more experiences",
+    "share": "Share your experience",
+    "photoAlt": "Photo by {name}",
+    "error": "Could not load more experiences."
+  },
+  "Share": {
+    "title": "Share your experience",
+    "intro": "Tell others what it was like. Your post appears on the place page after an admin checks it.",
+    "loginGate": {
+      "title": "Log in to share your experience",
+      "body": "Sharing needs an account, so we can keep the community trustworthy.",
+      "logIn": "Log in",
+      "signUp": "Sign up",
+      "loading": "Loading…"
+    },
+    "place": {
+      "label": "1. Which place?",
+      "searchLabel": "Search for a place",
+      "placeholder": "Type the name, in Khmer or English",
+      "noResults": "No place found with that name.",
+      "addNew": "Not on the list? Add a new place",
+      "change": "Change",
+      "selected": "Selected place",
+      "searching": "Searching…",
+      "results": "Matching places",
+      "choose": "Choose {name}"
+    },
+    "rating": {
+      "label": "2. Your rating",
+      "stars": "{count, plural, one {# star} other {# stars}}"
+    },
+    "visited": {
+      "label": "3. Day you visited"
+    },
+    "story": {
+      "label": "4. Your story",
+      "placeholder": "What did you do? Any tips for the next visitor?"
+    },
+    "photos": {
+      "label": "Photos (optional)"
+    },
+    "submit": {
+      "send": "Share post",
+      "sending": "Sending…",
+      "uploading": "Uploading photo {current} of {total}…",
+      "note": "An admin checks new posts before they appear."
+    },
+    "errors": {
+      "summary": "Please fix the items marked below.",
+      "place": "Please choose a place.",
+      "rating": "Please choose a rating.",
+      "date": "Please choose a day that has already happened.",
+      "story": "Please write at least 10 characters.",
+      "uploadsOff": "Photo uploads are not set up yet. Please try again later, or share without photos.",
+      "uploadFailed": "A photo could not be uploaded. Please check your connection and try again.",
+      "rateLimited": "You shared several posts in a short time. Please try again later.",
+      "failed": "We could not send your post. Please try again.",
+      "loginExpired": "Please log in again to send your post.",
+      "placeGone": "That place is not available any more. Please choose another."
+    },
+    "success": {
+      "title": "Thank you!",
+      "body": "Your post was sent. An admin will check it before it appears.",
+      "live": "Your post is live.",
+      "viewPlace": "View the place",
+      "home": "Back to Explore",
+      "another": "Share another experience",
+      "shareTitle": "Tell your friends about this place"
+    }
+  },
+  "ShareMenu": {
+    "button": "Share",
+    "title": "Share this page",
+    "facebook": "Facebook",
+    "telegram": "Telegram",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "copyFailed": "Could not copy. Please copy the address from your browser.",
+    "native": "More options…",
+    "opensNew": "opens in a new tab"
   }
 }

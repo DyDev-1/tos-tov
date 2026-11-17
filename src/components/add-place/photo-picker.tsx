@@ -19,6 +19,7 @@ export function PhotoPicker({
   processing,
   messages,
   error,
+  label,
   onAdd,
   onRemove,
 }: {
@@ -26,6 +27,8 @@ export function PhotoPicker({
   processing: boolean;
   messages: string[];
   error?: string;
+  /** Text of the heading. Defaults to "1. Photos". */
+  label?: string;
   onAdd: (files: File[]) => void;
   onRemove: (id: string) => void;
 }) {
@@ -34,7 +37,7 @@ export function PhotoPicker({
 
   return (
     <fieldset aria-describedby="photos-hint" aria-invalid={!!error} className="space-y-3">
-      <legend className="mb-2 font-bold">{t("label")}</legend>
+      <legend className="mb-2 font-bold">{label ?? t("label")}</legend>
       <ul className="grid grid-cols-3 gap-3">
         <li>
           <label

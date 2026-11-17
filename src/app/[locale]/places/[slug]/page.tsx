@@ -9,6 +9,9 @@ import { FactCard } from "@/components/place/fact-card";
 import { GettingThere } from "@/components/place/getting-there";
 import { GuidesCard } from "@/components/place/guides-card";
 import { MonthStrip } from "@/components/place/month-strip";
+import { PostsSection } from "@/components/posts/posts-section";
+import { Stars } from "@/components/posts/stars";
+import { ShareMenu } from "@/components/share/share-menu";
 import { PlaceGallery } from "@/components/place/place-gallery";
 import { ReportProblem } from "@/components/place/report-problem";
 import { Link } from "@/i18n/navigation";
@@ -17,6 +20,7 @@ import { currentMonth, formatDate, monthName } from "@/lib/dates";
 import { pickText } from "@/lib/i18n-content";
 import { SITE_NAME } from "@/lib/site";
 import { listComments } from "@/lib/services/engagement";
+import { listPosts } from "@/lib/services/posts";
 import { getPlaceBySlug } from "@/lib/services/places";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +28,22 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/places/[
   const { locale, slug } = await params;
   const place = await getPlaceBySlug(slug).catch(() => null);
   if (!place) return {};
+  const title = `${pickText(place.name, locale as Locale)} | ${SITE_NAME}`;
+  const description =
+    pickText(place.tagline, locale as Locale) ?? pickText(place.description, locale as Locale) ?? undefined;
   return {
-    title: `${pickText(place.name, locale as Locale)} | ${SITE_NAME}`,
-    description: pickText(place.tagline, locale as Locale) ?? pickText(place.description, locale as Locale) ?? undefined,
+    title,
+    description,
+    // What Facebook, Telegram and others show when this page is shared.
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      siteName: SITE_NAME,
+      url: `/${locale}/places/${slug}`,
+      images: place.coverPhoto ? [{ url: place.coverPhoto.url }] : undefined,
+    },
+    twitter: { card: place.coverPhoto ? "summary_large_image" : "summary", title, description },
   };
 }
 
@@ -48,8 +65,10 @@ export default async function PlacePage({ params }: PageProps<"/[locale]/places/
   const place = await getPlaceBySlug(slug);
   if (!place) notFound();
   const comments = (await listComments(slug, { limit: 20, offset: 0 })) ?? { items: [], total: 0 };
+  const posts = (await listPosts(slug, { limit: 5, offset: 0 })) ?? { items: [], total: 0 };
 
   const t = await getTranslations({ locale, namespace: "Place" });
+  const tp = await getTranslations({ locale, namespace: "Posts" });
   const month = currentMonth();
   const inSeason = place.bestMonths.includes(month);
   const name = pickText(place.name, locale)!;
@@ -138,6 +157,12 @@ export default async function PlacePage({ params }: PageProps<"/[locale]/places/
                 {inSeason && <span className={cn(TAG, "bg-primary text-primary-foreground")}>{t("inSeason")}</span>}
               </div>
               <h1 className="mt-3 font-heading text-3xl font-bold text-primary sm:text-5xl">{name}</h1>
+              {place.rating.average !== null && (
+                <a href="#posts" className="mt-2 inline-flex items-center gap-2 text-muted-foreground hover:underline">
+                  <Stars value={place.rating.average} label={tp("ratedAria", { rating: place.rating.average })} />
+                  <span>{tp("ratingSummary", { average: place.rating.average, count: place.rating.count })}</span>
+                </a>
+              )}
               <div className="mt-4 flex flex-wrap gap-2">
                 <LikeButton />
                 <SaveButton />
@@ -147,6 +172,7 @@ export default async function PlacePage({ params }: PageProps<"/[locale]/places/
                 >
                   {t("comments", { count: comments.total })}
                 </a>
+                <ShareMenu path={`/${locale}/places/${place.slug}`} text={name} />
               </div>
               <ActionError />
               {description && <p className="mt-4 max-w-2xl text-lg leading-relaxed">{description}</p>}
@@ -207,6 +233,10 @@ export default async function PlacePage({ params }: PageProps<"/[locale]/places/
                 </dl>
               </section>
             )}
+
+            <div className="order-6">
+              <PostsSection slug={place.slug} placeName={name} rating={place.rating} initialPosts={posts.items} total={posts.total} />
+            </div>
 
             <div className="order-7">
               <CommentsSection slug={place.slug} initialComments={comments.items} total={comments.total} />

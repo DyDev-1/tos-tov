@@ -6,12 +6,11 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { apiFetch } from "@/lib/client-api";
-import { prepareImage } from "@/lib/images";
-import { checkImageFile, MAX_PHOTOS_PER_PLACE } from "@/lib/uploads-shared";
 import { cn } from "@/lib/utils";
 import type { Category, Province } from "@/lib/validation/reference";
 import { MonthPicker } from "./month-picker";
-import { PhotoPicker, type PhotoItem } from "./photo-picker";
+import { usePhotoUploads } from "@/components/photos/use-photo-uploads";
+import { PhotoPicker } from "./photo-picker";
 import { DEFAULT_PIN, isInsideCambodia, PinPicker, type Pin } from "./pin-picker";
 import { SimilarPlaces } from "./similar-places";
 
@@ -88,16 +87,14 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
   const { isLoaded, isSignedIn } = useAuth();
 
   const [fields, setFields] = useState<Fields>(EMPTY);
-  const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const [photoMessages, setPhotoMessages] = useState<string[]>([]);
-  const [processing, setProcessing] = useState(false);
+  const uploads = usePhotoUploads();
+  const { photos, processing } = uploads;
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState<null | { current: number; total: number }>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [duplicate, setDuplicate] = useState<Duplicate | null>(null);
   const [done, setDone] = useState<Done | null>(null);
   const [draftSaved, setDraftSaved] = useState(false);
-  const uploaded = useRef(new Map<string, string>()); // photo id -> public URL, so a retry never uploads twice
   const summaryRef = useRef<HTMLDivElement>(null);
   const restored = useRef(false);
 
@@ -124,62 +121,10 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
     return () => clearTimeout(timer);
   }, [fields, done]);
 
-  const photosRef = useRef(photos);
-  useEffect(() => {
-    photosRef.current = photos;
-  }, [photos]);
-  // Free the preview images from memory when leaving the page.
-  useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.previewUrl)), []);
-
   const set = useCallback(<K extends keyof Fields>(key: K, value: Fields[K]) => {
     setFields((f) => ({ ...f, [key]: value }));
     setDuplicate(null);
   }, []);
-
-  async function addPhotos(files: File[]) {
-    const messages: string[] = [];
-    const room = MAX_PHOTOS_PER_PLACE - photos.length;
-    const chosen = files.slice(0, Math.max(room, 0));
-    if (files.length > chosen.length) messages.push(t("photos.tooMany", { max: MAX_PHOTOS_PER_PLACE }));
-
-    setProcessing(true);
-    const added: PhotoItem[] = [];
-    for (const file of chosen) {
-      const check = checkImageFile(file);
-      if (check === "not_image") messages.push(t("photos.notImage", { name: file.name }));
-      else if (check === "too_big") messages.push(t("photos.tooBig", { name: file.name }));
-      else {
-        try {
-          const prepared = await prepareImage(file);
-          added.push({
-            id: crypto.randomUUID(),
-            name: file.name,
-            previewUrl: URL.createObjectURL(prepared.blob),
-            blob: prepared.blob,
-            contentType: prepared.contentType,
-          });
-        } catch {
-          messages.push(t("photos.cannotRead", { name: file.name }));
-        }
-      }
-    }
-    setProcessing(false);
-    setPhotoMessages(messages);
-    if (added.length > 0) {
-      setPhotos((list) => [...list, ...added]);
-      setErrors((e) => ({ ...e, photos: undefined }));
-    }
-  }
-
-  function removePhoto(id: string) {
-    setPhotos((list) => {
-      const gone = list.find((p) => p.id === id);
-      if (gone) URL.revokeObjectURL(gone.previewUrl);
-      return list.filter((p) => p.id !== id);
-    });
-    uploaded.current.delete(id);
-    setPhotoMessages([]);
-  }
 
   function validate(): Errors {
     const found: Errors = {};
@@ -192,33 +137,6 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
     if (fields.feeKhr.trim() !== "" && !/^\d{1,8}$/.test(fields.feeKhr.trim())) found.feeKhr = t("errors.fee");
     if (fields.feeUsd.trim() !== "" && !/^\d{1,5}(\.\d{1,2})?$/.test(fields.feeUsd.trim())) found.feeUsd = t("errors.feeUsd");
     return found;
-  }
-
-  // Upload each photo straight to Cloudflare R2, using a link our server signs. Returns the public URLs.
-  async function uploadPhotos(): Promise<string[] | "uploads_off" | "login" | "failed"> {
-    const urls: string[] = [];
-    for (const [index, photo] of photos.entries()) {
-      const known = uploaded.current.get(photo.id);
-      if (known) {
-        urls.push(known);
-        continue;
-      }
-      setSubmitting({ current: index + 1, total: photos.length });
-      const link = await apiFetch<{ uploadUrl: string; publicUrl: string; headers: Record<string, string> }>(
-        "/api/v1/uploads/image",
-        { method: "POST", body: JSON.stringify({ contentType: photo.contentType, size: photo.blob.size }) },
-      );
-      if (!link.ok) return link.status === 503 ? "uploads_off" : link.status === 401 ? "login" : "failed";
-      try {
-        const put = await fetch(link.data.uploadUrl, { method: "PUT", headers: link.data.headers, body: photo.blob });
-        if (!put.ok) return "failed";
-      } catch {
-        return "failed";
-      }
-      uploaded.current.set(photo.id, link.data.publicUrl);
-      urls.push(link.data.publicUrl);
-    }
-    return urls;
   }
 
   async function submit(event: React.FormEvent, allowDuplicate = false) {
@@ -234,7 +152,7 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
     }
 
     setSubmitting({ current: 0, total: photos.length });
-    const urls = await uploadPhotos();
+    const urls = await uploads.upload((current, total) => setSubmitting({ current, total }));
     if (typeof urls === "string") {
       setSubmitting(null);
       setServerError(urls === "uploads_off" ? t("errors.uploadsOff") : urls === "login" ? t("errors.loginExpired") : t("errors.uploadFailed"));
@@ -264,7 +182,7 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
     if (result.ok) {
       writeDraft(null);
       setDraftSaved(false);
-      photos.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+      uploads.reset();
       setDone(result.data);
       return;
     }
@@ -278,11 +196,10 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
 
   function reset() {
     setFields(EMPTY);
-    setPhotos([]);
+    uploads.reset();
     setErrors({});
     setDuplicate(null);
     setServerError(null);
-    uploaded.current.clear();
     setDone(null);
   }
 
@@ -378,7 +295,16 @@ export function AddPlaceForm({ provinces, categories }: { provinces: Province[];
         </div>
       )}
 
-      <PhotoPicker items={photos} processing={processing} messages={photoMessages} error={errors.photos} onAdd={addPhotos} onRemove={removePhoto} />
+      <PhotoPicker
+        items={photos}
+        processing={processing}
+        messages={uploads.messages}
+        error={errors.photos}
+        onAdd={async (files) => {
+          if ((await uploads.addPhotos(files)) > 0) setErrors((e) => ({ ...e, photos: undefined }));
+        }}
+        onRemove={uploads.removePhoto}
+      />
 
       <Field id="place-name" label={t("name.label")} error={errors.name}>
         <input

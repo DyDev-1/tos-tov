@@ -33,7 +33,10 @@ export default async function AddPlacePage({ params }: PageProps<"/[locale]/add-
           {t("cancel")}
         </Link>
       </div>
-      <p className="mt-2 mb-8 text-muted-foreground">{t("intro")}</p>
+      <p className="mt-2 text-muted-foreground">{t("intro")}</p>
+      <Link href="/share" className="mt-2 mb-8 inline-flex min-h-11 items-center font-semibold text-laterite underline-offset-4 hover:underline">
+        {t("linkToShare")}
+      </Link>
       {lists ? (
         <AddPlaceForm provinces={lists.provinces} categories={lists.categories} />
       ) : (

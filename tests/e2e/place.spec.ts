@@ -99,3 +99,49 @@ test.describe("place page", () => {
     await expect(page.getByRole("link", { name: "Back" })).toBeVisible();
   });
 });
+
+test.describe("experiences (posts) and sharing", () => {
+  test("shows the average rating and the experiences, newest first", async ({ page }) => {
+    await page.goto(PLACE);
+    await expect(page.getByText("4.5 out of 5 · 2 posts").first()).toBeVisible();
+    const section = page.getByRole("region", { name: "Experiences" });
+    await expect(section.getByTestId("post")).toHaveCount(2);
+    await expect(section.getByTestId("post").first()).toContainText("Vanna");
+    await expect(section.getByTestId("post").first()).toContainText("Visited November 8, 2026");
+    await expect(section.getByRole("img", { name: "Rated 5 out of 5" })).toBeVisible();
+  });
+
+  test("a place without ratings says so", async ({ page }) => {
+    await page.goto("/en/places/kep-crab-market");
+    await expect(page.getByRole("region", { name: "Experiences" }).getByText("No ratings yet")).toBeVisible();
+    await expect(page.getByText("No experiences shared yet. Be the first to share yours.")).toBeVisible();
+  });
+
+  test("the Share your experience button opens the share page for this place", async ({ page }) => {
+    await page.goto(PLACE);
+    await page.getByRole("link", { name: "Share your experience" }).click();
+    await expect(page).toHaveURL(/\/en\/share\?place=bou-sra-waterfall$/);
+  });
+
+  test("the Share menu offers Facebook, Telegram and copy link", async ({ page }) => {
+    await page.goto(PLACE);
+    await page.getByRole("button", { name: "Share", exact: true }).first().click();
+    const menu = page.getByRole("group", { name: "Share this page" });
+    await expect(menu.getByRole("link", { name: /Facebook/ })).toHaveAttribute("href", /facebook\.com\/sharer\/sharer\.php\?u=.*bou-sra-waterfall/);
+    await expect(menu.getByRole("link", { name: /Telegram/ })).toHaveAttribute("href", /t\.me\/share\/url\?url=.*bou-sra-waterfall/);
+    await expect(menu.getByRole("button", { name: "Copy link" })).toBeVisible();
+  });
+
+  test("has a page preview for sharing (Open Graph)", async ({ page }) => {
+    await page.goto(PLACE);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", /Bou Sra Waterfall/);
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", /Full flow after the rains/);
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", /\/en\/places\/bou-sra-waterfall$/);
+  });
+
+  test("works in Khmer", async ({ page }) => {
+    await page.goto("/km/places/bou-sra-waterfall");
+    await expect(page.getByRole("region", { name: "បទពិសោធន៍" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "ចែករំលែកបទពិសោធន៍របស់អ្នក" })).toBeVisible();
+  });
+});

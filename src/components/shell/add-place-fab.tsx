@@ -10,7 +10,7 @@ import { isAuthPath, isNavActive } from "@/lib/nav";
 export function AddPlaceFab() {
   const t = useTranslations("Shell");
   const pathname = usePathname();
-  if (isNavActive(pathname, "/map") || isNavActive(pathname, "/add-place") || isAuthPath(pathname)) return null;
+  if (isNavActive(pathname, "/map") || isNavActive(pathname, "/add-place") || isNavActive(pathname, "/share") || isAuthPath(pathname)) return null;
 
   return (
     <Link
