@@ -34,7 +34,7 @@ export async function runSmoke(
     const { response, body } = await json("/api/v1/health");
     expect(response.status === 200, `status ${response.status}`);
     expect(body?.status === "ok" && body?.database === "up", `body ${JSON.stringify(body)}`);
-    return "ok, database up";
+    return `ok, database up, version ${body.version ?? "?"}${body.commit ? ` (${body.commit})` : ""}`;
   });
 
   await check("All 25 provinces are there", async () => {

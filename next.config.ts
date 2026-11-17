@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
   turbopack: {
+    // This folder is the project root. (Without it Next.js looks further up and warns about unrelated lock files.)
+    root: process.cwd(),
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
