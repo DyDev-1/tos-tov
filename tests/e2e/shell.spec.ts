@@ -87,3 +87,15 @@ test.describe("accessibility basics", () => {
     }
   });
 });
+
+test.describe("security headers", () => {
+  test("every page carries the basic protections", async ({ request }) => {
+    for (const path of ["/en", "/km/map", "/api/v1/health"]) {
+      const headers = (await request.get(path)).headers();
+      expect(headers["x-content-type-options"], path).toBe("nosniff");
+      expect(headers["referrer-policy"], path).toBe("strict-origin-when-cross-origin");
+      expect(headers["x-frame-options"], path).toBe("SAMEORIGIN");
+      expect(headers["permissions-policy"], path).toContain("geolocation=(self)");
+    }
+  });
+});

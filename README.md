@@ -53,6 +53,12 @@ table rights away from Supabase's `anon` and `authenticated` roles. So even if s
 API key, they would see no rows. The app connects as the database owner, which is not affected.
 `npm run db:check` verifies this, and a test fails if a new table forgets row-level security.
 
+## Checks and deploying
+
+Every pull request runs lint, type check, tests and build. A merge to `main` deploys to **staging**; **production**
+waits until a person approves it in GitHub. After each deploy a smoke test looks at the live site
+(`npm run smoke -- https://your-site`). Setup, step by step, is in [docs/deploy.md](docs/deploy.md).
+
 ## Loading the real places (stage 1 needs 100 to 200)
 
 Fill a spreadsheet with the places and load them all at once, checked row by row, all or nothing:
@@ -124,6 +130,7 @@ the form explains that uploads are not set up yet.
 | `npm run db:seed` | Add provinces, categories and sample places (local only; safe to run again) |
 | `npm run db:seed:reference` | Add provinces and categories only (safe for any database) |
 | `npm run db:import -- file.csv` | Load places from a spreadsheet or JSON file (see `data/README.md`) |
+| `npm run smoke -- <address>` | Check that a deployed site is alive and safe |
 | `npm run db:check` | Check PostGIS, row-level security and migrations of the database in `DIRECT_URL` |
 | `npm run db:studio` | Browse the database |
 

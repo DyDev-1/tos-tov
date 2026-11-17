@@ -1,17 +1,32 @@
-name: CI
+name: CI/CD
 
-# Runs on every pull request and on pushes to main.
+# claude.md workflow:
+#   - Every pull request runs: lint -> type check -> tests -> build (job "check").
+#   - A merge to main deploys to STAGING (job "deploy-staging").
+#   - PRODUCTION needs a manual approval (job "deploy-production" uses the "production" environment,
+#     which has required reviewers in GitHub). It deploys the same commit that passed staging.
+# The deploy jobs stay off until you set DEPLOY_ENABLED=true (see docs/deploy.md), so CI works from day one.
+
 on:
   pull_request:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
+# A new push to the same pull request cancels the older run. Runs on main are never cancelled.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check:
+    name: Lint, type check, tests, build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
-    # A PostGIS database for tests that need one.
+    # A PostGIS database for the tests that need one.
     services:
       db:
         image: postgis/postgis:17-3.5
@@ -28,7 +43,7 @@ jobs:
 
     env:
       DATABASE_URL: postgres://tostov:tostov@localhost:5432/tostov
-      # Add these in GitHub → Settings → Secrets and variables → Actions (use Clerk *test* keys).
+      # Add these in GitHub > Settings > Secrets and variables > Actions (use Clerk *test* keys).
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       NEXT_TELEMETRY_DISABLED: 1
@@ -50,19 +65,139 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
-      - name: Unit tests
-        run: npm test
-
-      - name: Set up database (migrate + seed)
+      - name: Set up the database (migrate, check, add sample data)
         run: |
           npm run db:migrate
+          npm run db:check
           npm run db:seed
+
+      - name: Tests (unit, component and database)
+        run: npm test
 
       - name: Build
         run: npm run build
 
-      - name: Install Playwright browser
+      - name: Install the Playwright browser
         run: npx playwright install --with-deps chromium
 
       - name: End-to-end tests
         run: npm run test:e2e
+
+      - name: Keep the Playwright report if the browser tests failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # Known problems in packages we use. Informational: it never blocks a merge.
+  audit:
+    name: Package security check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: npm audit (production packages, high and critical only)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+
+  deploy-staging:
+    name: Deploy to staging
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Only one staging deploy at a time, and a running deploy is never cut off halfway.
+    concurrency:
+      group: deploy-staging
+      cancel-in-progress: false
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_STAGING_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      # "staging" environment secret: the direct address of the staging Supabase database.
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # Migrations run BEFORE the new code goes live, so they must only ADD things (new tables, new
+      # optional columns). Removing or renaming something takes two releases. See docs/deploy.md.
+      - name: Update the staging database
+        run: |
+          npm run db:migrate
+          npm run db:check
+
+      - name: Deploy
+        id: deploy
+        run: |
+          npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel build --prod --token="$VERCEL_TOKEN"
+          url=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test
+        run: npm run smoke -- "${{ steps.deploy.outputs.url }}"
+        env:
+          EXPECT_STAGE: ${{ vars.STAGING_RELEASE_STAGE }}
+
+  deploy-production:
+    name: Deploy to production (needs approval)
+    needs: deploy-staging
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    # The "production" environment has required reviewers, so this job waits until a person approves it.
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PRODUCTION_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      # "production" environment secret: the direct address of the production Supabase database.
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Update the production database
+        run: |
+          npm run db:migrate
+          npm run db:check
+
+      - name: Deploy
+        id: deploy
+        run: |
+          npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel build --prod --token="$VERCEL_TOKEN"
+          url=$(npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test
+        run: npm run smoke -- "${{ steps.deploy.outputs.url }}"
+        env:
+          EXPECT_STAGE: ${{ vars.PRODUCTION_RELEASE_STAGE }}
