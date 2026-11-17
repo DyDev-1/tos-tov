@@ -17,7 +17,12 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["tests/unit/**/*.test.{ts,tsx}", "tests/integration/**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
+    include: [
+      "tests/unit/**/*.test.{ts,tsx}",
+      "tests/components/**/*.test.{ts,tsx}",
+      "tests/integration/**/*.test.{ts,tsx}",
+      "src/**/*.test.{ts,tsx}",
+    ],
     environment: "node",
     env: { DATABASE_URL: TEST_DATABASE_URL },
     globalSetup: ["./tests/support/db-setup.ts"],

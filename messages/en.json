@@ -205,5 +205,124 @@
     "keepBrowsing": "Keep browsing without an account",
     "loading": "Loading the form…",
     "loadError": "The form could not load. Please check your connection and reload the page."
+  },
+  "AddPlace": {
+    "title": "Add a place",
+    "intro": "Share somewhere you have been. Only the first four steps are required.",
+    "cancel": "Cancel",
+    "optional": "(optional)",
+    "loginGate": {
+      "title": "Log in to add a place",
+      "body": "Adding places needs an account, so we can keep the community trustworthy.",
+      "logIn": "Log in",
+      "signUp": "Sign up",
+      "loading": "Loading…"
+    },
+    "photos": {
+      "label": "1. Photos",
+      "add": "Add photos",
+      "hint": "Photos are made smaller before upload, so they send on slow connections.",
+      "cover": "Cover",
+      "remove": "Remove photo {n}",
+      "count": "{count} of {max} photos",
+      "preview": "Photo {n}",
+      "tooMany": "You can add up to {max} photos.",
+      "notImage": "{name} is not an image.",
+      "tooBig": "{name} is larger than 10 MB.",
+      "cannotRead": "{name} could not be read. Please try another photo.",
+      "processing": "Preparing photos…"
+    },
+    "name": {
+      "label": "2. Name of the place",
+      "placeholder": "For example: Bou Sra Waterfall"
+    },
+    "province": {
+      "label": "3. Province",
+      "placeholder": "Choose a province"
+    },
+    "category": {
+      "label": "Category",
+      "placeholder": "Choose a category"
+    },
+    "pin": {
+      "label": "4. Map pin",
+      "mapLabel": "Map: tap or drag the pin to move it",
+      "hint": "Tap the map or drag the pin to the exact spot.",
+      "useMyLocation": "Use my location",
+      "locating": "Finding you…",
+      "locationDenied": "We could not get your location. Tap the map instead.",
+      "outside": "This spot is outside Cambodia. Please move the pin.",
+      "set": "Pin set: {lat}, {lng}"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "What is it like? Why go?"
+    },
+    "months": {
+      "label": "Best months to visit"
+    },
+    "feeKhr": {
+      "label": "Entry fee, Cambodians",
+      "placeholder": "Riel, or 0 if free"
+    },
+    "feeUsd": {
+      "label": "Entry fee, foreigners",
+      "placeholder": "US dollars, or 0 if free"
+    },
+    "bring": {
+      "label": "What to bring, and how to get there",
+      "placeholder": "Shoes, water, road condition, transport"
+    },
+    "similar": {
+      "title": "Is it one of these?",
+      "body": "Places with a similar name or close to your pin. If yours is different, carry on.",
+      "view": "View place",
+      "away": "{meters} m away",
+      "opensNew": "opens in a new tab"
+    },
+    "duplicate": {
+      "title": "A place like this may already exist",
+      "body": "{name} is at the same spot or has the same name in this province.",
+      "view": "View {name}",
+      "anyway": "Mine is different, add it anyway"
+    },
+    "submit": {
+      "send": "Send place",
+      "sending": "Sending…",
+      "uploading": "Uploading photo {current} of {total}…",
+      "note": "An admin checks new places before they appear. You can edit it later.",
+      "draftSaved": "Draft saved on this phone"
+    },
+    "errors": {
+      "summary": "Please fix the items marked below.",
+      "name": "Please enter the name of the place.",
+      "province": "Please choose a province.",
+      "category": "Please choose a category.",
+      "photos": "Please add at least one photo.",
+      "pin": "Please move the pin to the place.",
+      "fee": "Please use a whole number, 0 or more.",
+      "feeUsd": "Please use a number, 0 or more.",
+      "uploadsOff": "Photo uploads are not set up yet. Please try again later.",
+      "uploadFailed": "A photo could not be uploaded. Please check your connection and try again.",
+      "rateLimited": "You added several places in a short time. Please try again later.",
+      "failed": "We could not send your place. Please try again.",
+      "loginExpired": "Please log in again to send your place."
+    },
+    "success": {
+      "title": "Thank you!",
+      "body": "Your place was sent. An admin will check it before it appears.",
+      "live": "Your place is live.",
+      "view": "View the place",
+      "home": "Back to Explore",
+      "another": "Add another place"
+    }
+  },
+  "Saved": {
+    "signedOutTitle": "Log in to see your saved places",
+    "signedOutBody": "Tap Save on any place and it will wait for you here.",
+    "empty": "You have not saved any places yet.",
+    "emptyHint": "Open a place and tap Save, and it will show up here.",
+    "explore": "Explore places",
+    "count": "{count, plural, one {# saved place} other {# saved places}}"
   }
 }

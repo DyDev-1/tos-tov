@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as getComments, POST as postComment } from "@/app/api/v1/places/[slug]/comments/route";
 import { DELETE as unlike, PUT as like } from "@/app/api/v1/places/[slug]/like/route";
+import { GET as getSaves } from "@/app/api/v1/me/saves/route";
 import { GET as getMe } from "@/app/api/v1/places/[slug]/me/route";
 import { POST as postReport } from "@/app/api/v1/places/[slug]/reports/route";
 import { PUT as save } from "@/app/api/v1/places/[slug]/save/route";
@@ -108,5 +109,40 @@ describe("engagement API", () => {
       const bad = await postReport(new Request(url("reports"), json({ reason: "spam" })), ctx());
       expect(bad.status).toBe(400);
     });
+  });
+});
+
+describe("GET /api/v1/me/saves", () => {
+  const call = () => getSaves(new Request("http://localhost/api/v1/me/saves"));
+
+  beforeEach(async () => {
+    await resetAndSeedPlaces();
+  });
+
+  it("answers 401 when nobody is logged in", async () => {
+    loginAs(null);
+    expect((await call()).status).toBe(401);
+  });
+
+  it("lists only my saved places, privately", async () => {
+    const me = await createTestUser("Me");
+    const other = await createTestUser("Other");
+    loginAs(me);
+    await save(new Request(url("save"), { method: "PUT" }), ctx());
+    loginAs(other);
+    await save(new Request(url("save"), { method: "PUT" }), ctx("angkor-wat"));
+
+    loginAs(me);
+    const res = await call();
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Cache-Control")).toContain("no-store");
+    const body = await res.json();
+    expect(body.data.map((p: { slug: string }) => p.slug)).toEqual([SLUG]);
+    expect(body.meta.total).toBe(1);
+  });
+
+  it("is empty when nothing is saved", async () => {
+    loginAs(await createTestUser());
+    expect((await (await call()).json()).data).toEqual([]);
   });
 });

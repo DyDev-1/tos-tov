@@ -17,6 +17,8 @@ export type LeafletMapProps = {
   /** Zoom the map to show every marker. */
   fit?: boolean;
   zoom?: number;
+  /** Zoom level when the map starts on a pin or a single marker. */
+  pinZoom?: number;
   className?: string;
   label: string;
 };
@@ -63,6 +65,15 @@ function FlyToSelected({ markers, selectedId }: { markers: MapMarker[]; selected
   return null;
 }
 
+// When the pin is moved from outside the map (for example "Use my location"), bring it into view.
+function FollowPin({ pin }: { pin: { lat: number; lng: number } | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (pin && !map.getBounds().contains([pin.lat, pin.lng])) map.flyTo([pin.lat, pin.lng], Math.max(map.getZoom(), 12));
+  }, [pin, map]);
+  return null;
+}
+
 function ClickToMove({ onPinChange }: { onPinChange?: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(event) {
@@ -80,6 +91,7 @@ export default function LeafletMap({
   onPinChange,
   fit = false,
   zoom = 7,
+  pinZoom = 12,
   className,
   label,
 }: LeafletMapProps) {
@@ -91,7 +103,7 @@ export default function LeafletMap({
     <div role="region" aria-label={label} className={className}>
       <MapContainer
         center={start}
-        zoom={markers.length === 1 || pin ? 12 : zoom}
+        zoom={markers.length === 1 || pin ? pinZoom : zoom}
         scrollWheelZoom={false}
         className="size-full rounded-[inherit]"
       >
@@ -100,6 +112,7 @@ export default function LeafletMap({
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {fit && <FitToMarkers markers={markers} />}
+        <FollowPin pin={pin} />
         <FlyToSelected markers={markers} selectedId={selectedId} />
         {markers.map((marker) => (
           <Marker

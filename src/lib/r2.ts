@@ -11,7 +11,7 @@ import { ALLOWED_IMAGE_TYPES } from "@/lib/uploads-shared";
 
 type R2Config = { accountId: string; accessKeyId: string; secretAccessKey: string; bucket: string; publicUrl: string };
 
-export function getR2Config(env: NodeJS.ProcessEnv = process.env): R2Config | null {
+export function getR2Config(env: Record<string, string | undefined> = process.env): R2Config | null {
   const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL } = env;
   if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET || !R2_PUBLIC_URL) return null;
   return {
@@ -41,6 +41,8 @@ export async function createUploadLink(
 
   const client = new S3Client({
     region: "auto",
+    // Do not add extra checksum headers to the signed link: R2 rejects uploads that do not repeat them.
+    requestChecksumCalculation: "WHEN_REQUIRED",
     endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
     credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
   });

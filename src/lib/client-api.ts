@@ -3,7 +3,7 @@
 
 export type ApiResult<T> =
   | { ok: true; status: number; data: T; meta?: Record<string, unknown> }
-  | { ok: false; status: number; code?: string; message?: string };
+  | { ok: false; status: number; code?: string; message?: string; details?: unknown };
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
   try {
@@ -13,7 +13,13 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<Api
     });
     const body = await response.json().catch(() => null);
     if (response.ok) return { ok: true, status: response.status, data: body?.data as T, meta: body?.meta };
-    return { ok: false, status: response.status, code: body?.error?.code, message: body?.error?.message };
+    return {
+      ok: false,
+      status: response.status,
+      code: body?.error?.code,
+      message: body?.error?.message,
+      details: body?.error?.details,
+    };
   } catch {
     return { ok: false, status: 0 };
   }

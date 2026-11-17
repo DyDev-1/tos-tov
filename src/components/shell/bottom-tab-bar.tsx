@@ -15,7 +15,8 @@ const TAB_CLASS =
 export function BottomTabBar() {
   const t = useTranslations();
   const pathname = usePathname();
-  if (isAuthPath(pathname)) return null;
+  // No tab bar on focused screens (sign up, log in, and the Add a place form with its own bottom button).
+  if (isAuthPath(pathname) || isNavActive(pathname, "/add-place")) return null;
 
   return (
     <nav
