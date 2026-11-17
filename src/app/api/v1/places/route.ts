@@ -1,4 +1,4 @@
-import { jsonData, jsonError, PLACES_CACHE, readJson, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, PLACES_CACHE, readJson, banned, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
 import { createPlace } from "@/lib/services/place-submissions";
 import { listPlaces } from "@/lib/services/places";
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
+    if (user.bannedAt) return banned();
 
     const parsed = createPlaceInputSchema.safeParse(await readJson(request));
     if (!parsed.success) {

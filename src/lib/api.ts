@@ -29,3 +29,7 @@ export async function readJson(request: Request): Promise<unknown> {
 }
 
 export const unauthorized = () => jsonError(401, "unauthorized", "Please log in first");
+
+export const forbidden = () => jsonError(403, "forbidden", "You are not allowed to do this");
+// A banned person can still read the site, but cannot post, comment, like, save, report or upload.
+export const banned = () => jsonError(403, "banned", "Your account has been suspended");

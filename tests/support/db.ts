@@ -5,7 +5,7 @@ import { seed, seedSamplePlaces } from "@/db/seed";
 // Helpers for integration tests. `db` here points at the test database (see vitest.config.mts).
 
 export async function resetDatabase() {
-  await db.execute(sql`truncate table provinces, categories, users restart identity cascade`);
+  await db.execute(sql`truncate table provinces, categories, users, admin_actions restart identity cascade`);
 }
 
 export async function resetAndSeed() {
@@ -27,6 +27,15 @@ export async function createTestUser(name = "Test User") {
     .values({ clerkId: `test:${Math.random().toString(36).slice(2)}`, name })
     .returning();
   return user;
+}
+
+// A regular user who is an admin.
+export async function createTestAdmin(name = "Admin") {
+  const [admin] = await db
+    .insert(users)
+    .values({ clerkId: `test:admin:${Math.random().toString(36).slice(2)}`, name, role: "admin" })
+    .returning();
+  return admin;
 }
 
 export { db };

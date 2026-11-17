@@ -1,4 +1,4 @@
-import { jsonData, jsonError, readJson, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, readJson, banned, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
 import { createPost, listPosts } from "@/lib/services/posts";
 import { createPostInputSchema, listPostsQuerySchema } from "@/lib/validation/posts";
@@ -31,6 +31,7 @@ export async function POST(request: Request, ctx: Ctx) {
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
+    if (user.bannedAt) return banned();
 
     const parsed = createPostInputSchema.safeParse(await readJson(request));
     if (!parsed.success) {

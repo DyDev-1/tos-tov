@@ -18,8 +18,9 @@ export async function getCurrentUser(): Promise<UserRow | null> {
   });
 }
 
-// Admin pages and routes must call this on the server. Hiding a button is not enough.
+// Admin pages and routes must call one of these on the server. Hiding a button is not enough.
+// A banned admin is no admin.
 export async function requireAdmin(): Promise<UserRow | null> {
   const user = await getCurrentUser();
-  return user?.role === "admin" ? user : null;
+  return user?.role === "admin" && !user.bannedAt ? user : null;
 }

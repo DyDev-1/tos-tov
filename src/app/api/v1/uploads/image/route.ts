@@ -1,4 +1,4 @@
-import { jsonData, jsonError, readJson, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, readJson, banned, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
 import { createUploadLink, getR2Config } from "@/lib/r2";
 import { uploadRequestSchema } from "@/lib/validation/place-input";
@@ -10,6 +10,7 @@ export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
+    if (user.bannedAt) return banned();
 
     const parsed = uploadRequestSchema.safeParse(await readJson(request));
     if (!parsed.success) {

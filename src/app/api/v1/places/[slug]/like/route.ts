@@ -1,4 +1,4 @@
-import { jsonData, jsonError, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, banned, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
 import { setLike } from "@/lib/services/engagement";
 
@@ -9,6 +9,7 @@ async function handle(ctx: Ctx, on: boolean) {
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
+    if (user.bannedAt) return banned();
     const result = await setLike(user.id, slug, on);
     if (!result) return jsonError(404, "not_found", "Place not found");
     return jsonData(result);

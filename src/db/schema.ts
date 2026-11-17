@@ -59,6 +59,9 @@ export const users = pgTable("users", {
   name: text().notNull(),
   email: text(),
   role: userRole().notNull().default("user"),
+  // Set when an admin bans the person. A banned person can still read, but cannot post, comment, like or upload.
+  bannedAt: timestamp("banned_at", { withTimezone: true }),
+  bannedReason: text("banned_reason"),
   ...timestamps,
 }).enableRLS();
 
@@ -255,6 +258,24 @@ export const reports = pgTable(
   (t) => [index("reports_status_idx").on(t.status, t.createdAt)],
 ).enableRLS();
 
+// Every change an admin makes is written here (CLAUDE.md: log admin actions). Rows are never edited or deleted.
+export const adminActions = pgTable(
+  "admin_actions",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    adminId: integer("admin_id")
+      .notNull()
+      .references(() => users.id),
+    // What was done, like "place.approve" or "user.ban".
+    action: text().notNull(),
+    targetType: text("target_type").notNull(),
+    targetId: integer("target_id"),
+    details: jsonb().$type<Record<string, unknown>>().notNull().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("admin_actions_created_idx").on(t.createdAt), index("admin_actions_target_idx").on(t.targetType, t.targetId)],
+).enableRLS();
+
 export type ProvinceRow = typeof provinces.$inferSelect;
 export type CategoryRow = typeof categories.$inferSelect;
 export type UserRow = typeof users.$inferSelect;
@@ -263,3 +284,4 @@ export type PhotoRow = typeof photos.$inferSelect;
 export type GuideRow = typeof guides.$inferSelect;
 export type CommentRow = typeof comments.$inferSelect;
 export type PostRow = typeof posts.$inferSelect;
+export type AdminActionRow = typeof adminActions.$inferSelect;

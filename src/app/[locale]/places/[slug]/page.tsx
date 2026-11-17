@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
 import { connection } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ActionError, LikeButton, SaveButton } from "@/components/place/action-buttons";
@@ -20,6 +21,7 @@ import { currentMonth, formatDate, monthName } from "@/lib/dates";
 import { pickText } from "@/lib/i18n-content";
 import { SITE_NAME } from "@/lib/site";
 import { listComments } from "@/lib/services/engagement";
+import { resolveMergedPlaceSlug } from "@/lib/services/admin";
 import { listPosts } from "@/lib/services/posts";
 import { getPlaceBySlug } from "@/lib/services/places";
 import { cn } from "@/lib/utils";
@@ -63,7 +65,12 @@ export default async function PlacePage({ params }: PageProps<"/[locale]/places/
   await connection();
 
   const place = await getPlaceBySlug(slug);
-  if (!place) notFound();
+  if (!place) {
+    // A place that was merged into another keeps working: its old address leads to the place that stays.
+    const mergedInto = await resolveMergedPlaceSlug(slug);
+    if (mergedInto) redirect({ href: `/places/${mergedInto}`, locale });
+    notFound();
+  }
   const comments = (await listComments(slug, { limit: 20, offset: 0 })) ?? { items: [], total: 0 };
   const posts = (await listPosts(slug, { limit: 5, offset: 0 })) ?? { items: [], total: 0 };
 

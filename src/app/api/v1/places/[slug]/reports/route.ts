@@ -1,4 +1,4 @@
-import { jsonData, jsonError, readJson, unauthorized } from "@/lib/api";
+import { jsonData, jsonError, readJson, banned, unauthorized } from "@/lib/api";
 import { getCurrentUser } from "@/lib/auth";
 import { createReport } from "@/lib/services/engagement";
 import { reportInputSchema } from "@/lib/validation/engagement";
@@ -9,6 +9,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/v1/places/[
   try {
     const user = await getCurrentUser();
     if (!user) return unauthorized();
+    if (user.bannedAt) return banned();
 
     const parsed = reportInputSchema.safeParse(await readJson(request));
     if (!parsed.success) return jsonError(400, "invalid_body", "Please choose a reason", parsed.error.flatten().fieldErrors);
