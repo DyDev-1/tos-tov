@@ -7,8 +7,7 @@
     "explore": "Explore",
     "map": "Map",
     "saved": "Saved",
-    "logIn": "Log in",
-    "language": "ភាសាខ្មែរ"
+    "logIn": "Log in"
   },
   "Home": {
     "title": "Find your next place in Cambodia",
@@ -21,5 +20,16 @@
       "error": "We couldn't load the provinces. Please check your connection and try again.",
       "retry": "Try again"
     }
+  },
+  "Shell": {
+    "skipToContent": "Skip to content",
+    "mainNav": "Main navigation",
+    "tabBar": "Main tabs",
+    "profile": "Profile",
+    "addPlace": "Add a place",
+    "language": "Language",
+    "comingSoon": "Coming soon",
+    "comingSoonBody": "We are building this page. Please check back soon.",
+    "backHome": "Back to Explore"
   }
 }

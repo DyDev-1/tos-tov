@@ -4,6 +4,9 @@ import { Bricolage_Grotesque, Noto_Sans, Noto_Sans_Khmer } from "next/font/googl
 import { ClerkProvider } from "@clerk/nextjs";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { AddPlaceFab } from "@/components/shell/add-place-fab";
+import { BottomTabBar } from "@/components/shell/bottom-tab-bar";
+import { SiteHeader } from "@/components/shell/site-header";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -26,6 +29,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "Shell" });
 
   return (
     <ClerkProvider>
@@ -34,7 +38,21 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         className={`${heading.variable} ${body.variable} ${khmer.variable} h-full antialiased`}
       >
         <body className="flex min-h-full flex-col">
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <NextIntlClientProvider>
+            <a
+              href="#content"
+              className="sr-only z-50 rounded-full bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+            >
+              {t("skipToContent")}
+            </a>
+            <SiteHeader />
+            {/* Extra bottom space on phone so the tab bar and "Add a place" button never cover content. */}
+            <div id="content" className="flex flex-1 flex-col pb-44 md:pb-24">
+              {children}
+            </div>
+            <BottomTabBar />
+            <AddPlaceFab />
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>
