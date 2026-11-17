@@ -11,7 +11,7 @@ export function ProvincePicker({ provinces, locale }: Props) {
   const other: Locale = locale === "km" ? "en" : "km";
 
   return (
-    <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:gap-5">
+    <ul className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 sm:gap-5">
       {provinces.map((province, i) => (
         <li key={province.id} className="w-30 shrink-0 snap-start sm:w-52" data-testid="province-card">
           <div
