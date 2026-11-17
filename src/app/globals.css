@@ -1,3 +1,6 @@
+/* Layer order: "clerk" sits below Tailwind's utilities, so our classes in clerkAppearance win over Clerk's own styles. */
+@layer theme, base, clerk, components, utilities;
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

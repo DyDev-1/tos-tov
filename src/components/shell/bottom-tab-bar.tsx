@@ -1,10 +1,10 @@
 "use client";
 
-import { Show, SignInButton, UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 import { User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { isNavActive } from "@/lib/nav";
+import { isAuthPath, isNavActive } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "./nav-items";
 
@@ -15,6 +15,7 @@ const TAB_CLASS =
 export function BottomTabBar() {
   const t = useTranslations();
   const pathname = usePathname();
+  if (isAuthPath(pathname)) return null;
 
   return (
     <nav
@@ -39,12 +40,10 @@ export function BottomTabBar() {
         })}
         <li>
           <Show when="signed-out">
-            <SignInButton mode="modal">
-              <button type="button" className={cn(TAB_CLASS, "w-full text-muted-foreground")}>
-                <User aria-hidden className="size-5" />
-                {t("Shell.profile")}
-              </button>
-            </SignInButton>
+            <Link href="/sign-in" className={cn(TAB_CLASS, "text-muted-foreground")}>
+              <User aria-hidden className="size-5" />
+              {t("Shell.profile")}
+            </Link>
           </Show>
           <Show when="signed-in">
             <div className={cn(TAB_CLASS, "text-muted-foreground")}>

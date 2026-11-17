@@ -7,6 +7,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AddPlaceFab } from "@/components/shell/add-place-fab";
 import { BottomTabBar } from "@/components/shell/bottom-tab-bar";
 import { SiteHeader } from "@/components/shell/site-header";
+import { clerkProviderAppearance } from "@/lib/clerk-appearance";
+import { clerkKhmer } from "@/lib/clerk-km";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -32,7 +34,15 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const t = await getTranslations({ locale, namespace: "Shell" });
 
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      // Sign-in pages live under the language prefix (/en/sign-in, /km/sign-in).
+      signInUrl={`/${locale}/sign-in`}
+      signUpUrl={`/${locale}/sign-up`}
+      signInFallbackRedirectUrl={`/${locale}`}
+      signUpFallbackRedirectUrl={`/${locale}`}
+      appearance={clerkProviderAppearance}
+      localization={locale === "km" ? clerkKhmer : undefined}
+    >
       <html
         lang={locale}
         className={`${heading.variable} ${body.variable} ${khmer.variable} h-full antialiased`}

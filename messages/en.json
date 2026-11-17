@@ -193,5 +193,17 @@
     "directions": "Directions",
     "inSeason": "In season now",
     "selectedPlace": "Selected place"
+  },
+  "Auth": {
+    "title": "Join to share the places you find",
+    "body": "Browsing is open to everyone. An account lets you add places, like, save and comment.",
+    "titleLogIn": "Welcome back",
+    "bodyLogIn": "Log in to add places, like, save and comment.",
+    "tabs": "Sign up or log in",
+    "signUp": "Sign up",
+    "logIn": "Log in",
+    "keepBrowsing": "Keep browsing without an account",
+    "loading": "Loading the form…",
+    "loadError": "The form could not load. Please check your connection and reload the page."
   }
 }

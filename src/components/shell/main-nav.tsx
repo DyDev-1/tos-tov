@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { isNavActive } from "@/lib/nav";
+import { isAuthPath, isNavActive } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "./nav-items";
 
@@ -10,6 +10,8 @@ import { NAV_ITEMS } from "./nav-items";
 export function MainNav() {
   const t = useTranslations();
   const pathname = usePathname();
+  // Keep an empty slot so the header's three columns stay in place (logo left, toggle right).
+  if (isAuthPath(pathname)) return <div aria-hidden className="hidden md:block" />;
 
   return (
     <nav aria-label={t("Shell.mainNav")} className="hidden md:block">
