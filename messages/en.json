@@ -1,0 +1,17 @@
+{
+  "Metadata": {
+    "title": "TosTov — Explore Cambodia",
+    "description": "Discover and share places to explore in Cambodia."
+  },
+  "Header": {
+    "explore": "Explore",
+    "map": "Map",
+    "saved": "Saved",
+    "logIn": "Log in",
+    "language": "ភាសាខ្មែរ"
+  },
+  "Home": {
+    "title": "Where do you want to go in Cambodia?",
+    "subtitle": "Discover places, the best time to visit and how to get there."
+  }
+}

@@ -1,0 +1,63 @@
+name: CI
+
+# Runs on every pull request and on pushes to main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # A PostGIS database for tests that need one.
+    services:
+      db:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_USER: tostov
+          POSTGRES_PASSWORD: tostov
+          POSTGRES_DB: tostov
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U tostov"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://tostov:tostov@localhost:5432/tostov
+      # Add these in GitHub → Settings → Secrets and variables → Actions (use Clerk *test* keys).
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      NEXT_TELEMETRY_DISABLED: 1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npm run test:e2e

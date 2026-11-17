@@ -1,0 +1,19 @@
+# Local development database: PostgreSQL 17 with the PostGIS extension.
+# Start it with:  docker compose up -d
+services:
+  db:
+    # imresamu/postgis is the multi-arch build (works on Apple Silicon) by a maintainer of the
+    # official postgis/postgis image, which only ships amd64.
+    image: imresamu/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tostov
+      POSTGRES_PASSWORD: tostov
+      POSTGRES_DB: tostov
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
