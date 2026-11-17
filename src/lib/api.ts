@@ -18,3 +18,14 @@ export function jsonData<T>(data: T, init?: { cache?: string; meta?: Record<stri
 export function jsonError(status: number, code: string, message: string, details?: unknown) {
   return Response.json({ error: { code, message, ...(details ? { details } : {}) } }, { status });
 }
+
+// Read a JSON request body. Returns undefined when the body is missing or not valid JSON.
+export async function readJson(request: Request): Promise<unknown> {
+  try {
+    return await request.json();
+  } catch {
+    return undefined;
+  }
+}
+
+export const unauthorized = () => jsonError(401, "unauthorized", "Please log in first");

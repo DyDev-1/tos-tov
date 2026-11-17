@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, ilike, inArray, or, arrayContains, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, or, arrayContains, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, comments, guides, photos, places, provinces, users } from "@/db/schema";
 import type { ListPlacesQuery, PlaceCard, PlaceDetail } from "@/lib/validation/places";
@@ -89,8 +89,15 @@ async function coversFor(placeIds: number[]): Promise<Map<number, Cover>> {
   return covers;
 }
 
-export async function listPlaces(query: ListPlacesQuery): Promise<{ items: PlaceCard[]; total: number }> {
+// `savedByUserId` limits the list to places that person saved (the Saved page).
+export async function listPlaces(
+  query: ListPlacesQuery,
+  options: { savedByUserId?: number } = {},
+): Promise<{ items: PlaceCard[]; total: number }> {
   const conditions: SQL[] = [eq(places.status, "published")];
+  if (options.savedByUserId !== undefined) {
+    conditions.push(sql`${places.id} in (select place_id from saves where user_id = ${options.savedByUserId})`);
+  }
   if (query.q) {
     const pattern = `%${escapeLike(query.q)}%`;
     conditions.push(or(ilike(places.nameEn, pattern), ilike(places.nameKm, pattern))!);

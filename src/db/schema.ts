@@ -201,6 +201,28 @@ export const comments = pgTable(
   (t) => [index("comments_place_idx").on(t.placeId, t.createdAt)],
 );
 
+export const reportReason = pgEnum("report_reason", ["wrong_info", "closed", "unsafe", "duplicate", "other"]);
+export const reportStatus = pgEnum("report_status", ["open", "resolved"]);
+
+// "Report a problem with this place". Admins review these (a later slice).
+export const reports = pgTable(
+  "reports",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    placeId: integer("place_id")
+      .notNull()
+      .references(() => places.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    reason: reportReason().notNull(),
+    message: text(),
+    status: reportStatus().notNull().default("open"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("reports_status_idx").on(t.status, t.createdAt)],
+);
+
 export type ProvinceRow = typeof provinces.$inferSelect;
 export type CategoryRow = typeof categories.$inferSelect;
 export type UserRow = typeof users.$inferSelect;

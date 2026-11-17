@@ -18,4 +18,15 @@ export async function resetAndSeedPlaces() {
   await seedSamplePlaces(db);
 }
 
+import { users } from "@/db/schema";
+
+// Make a regular test user (like someone who just logged in).
+export async function createTestUser(name = "Test User") {
+  const [user] = await db
+    .insert(users)
+    .values({ clerkId: `test:${Math.random().toString(36).slice(2)}`, name })
+    .returning();
+  return user;
+}
+
 export { db };
