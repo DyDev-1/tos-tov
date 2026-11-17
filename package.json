@@ -15,6 +15,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx scripts/seed.ts",
+    "db:seed:reference": "tsx scripts/seed.ts --reference-only",
+    "db:check": "tsx scripts/db-check.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

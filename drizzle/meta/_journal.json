@@ -29,6 +29,20 @@
       "when": 1794894946998,
       "tag": "0003_reports",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794914047335,
+      "tag": "0004_enable_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794914059512,
+      "tag": "0005_revoke_public_api_access",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,7 @@ See `claude.md` for the product rules and `uxui.md` for the design.
 
 ## Tech stack
 
-Next.js (App Router) + TypeScript · Clerk · PostgreSQL + PostGIS + Drizzle ·
+Next.js (App Router) + TypeScript · Clerk · PostgreSQL + PostGIS + Drizzle on Supabase ·
 Tailwind CSS + shadcn/ui · Leaflet + OpenStreetMap · Zod · next-intl (en, km) ·
 Cloudflare R2 · Vitest + Playwright · GitHub Actions
 
@@ -19,6 +19,39 @@ Cloudflare R2 · Vitest + Playwright · GitHub Actions
 5. Create the tables and add sample data: `npm run db:migrate` then `npm run db:seed`
    (25 provinces, 5 categories, 8 sample places with comments and demo guides).
 6. Start the app: `npm run dev`, then open http://localhost:3000
+
+## Supabase (staging and production)
+
+Supabase hosts our PostgreSQL database and nothing else. Login stays with Clerk and photos stay in
+Cloudflare R2, so we never use Supabase Auth, Storage or its public API.
+Local development, tests and CI all use the Docker database (`npm run db:up`), which is the same
+PostgreSQL + PostGIS.
+
+Do these steps once for **staging** and once for **production** (two separate Supabase projects):
+
+1. **Create the project** at supabase.com. Pick the region closest to your visitors (Singapore). Choose a
+   long database password and keep it in a password manager. Do not paste it into chat or into git.
+2. **Turn on PostGIS first.** Dashboard > Database > Extensions > search `postgis` > enable it, and choose
+   the schema **`extensions`** (not `public`). Do this before running the migrations.
+3. **Copy the two connection addresses** from Project Settings > Database > Connection string:
+   - **Transaction pooler** (port 6543) is `DATABASE_URL`. The running app uses it.
+   - **Direct connection** (port 5432) is `DIRECT_URL`. Migrations and scripts use it. If your network has
+     no IPv6, use the **Session pooler** address (port 5432) instead.
+4. **Keep them out of git.** On your computer, put them in a private file such as `.env.staging` (git
+   ignores every `.env*` file except `.env.example`). On the host (for example Vercel), add them under
+   Environment Variables.
+5. **Create the tables:** `ENV_FILE=.env.staging npm run db:migrate`
+6. **Add the starting data:**
+   - Provinces and categories, on every database: `ENV_FILE=.env.staging npm run db:seed:reference`
+   - Demo places, **staging only**: `ENV_FILE=.env.staging npm run db:seed -- --with-samples`.
+     The seed script refuses to add demo places to a hosted database without that flag.
+7. **Check it:** `ENV_FILE=.env.staging npm run db:check`. Every line should say `OK`.
+8. **Extra safety (optional):** Project Settings > Data API > turn the Data API off. The app does not use it.
+
+What the migrations do for Supabase: they switch on **row-level security** for every table and take the
+table rights away from Supabase's `anon` and `authenticated` roles. So even if someone found your public
+API key, they would see no rows. The app connects as the database owner, which is not affected.
+`npm run db:check` verifies this, and a test fails if a new table forgets row-level security.
 
 ### Clerk settings (in the Clerk dashboard)
 
@@ -45,7 +78,9 @@ the form explains that uploads are not set up yet.
 | `npm run db:up` | Start PostgreSQL + PostGIS in Docker |
 | `npm run db:generate` | Create a migration from `src/db/schema.ts` |
 | `npm run db:migrate` | Apply migrations |
-| `npm run db:seed` | Add provinces, categories and sample places (safe to run again) |
+| `npm run db:seed` | Add provinces, categories and sample places (local only; safe to run again) |
+| `npm run db:seed:reference` | Add provinces and categories only (safe for any database) |
+| `npm run db:check` | Check PostGIS, row-level security and migrations of the database in `DIRECT_URL` |
 | `npm run db:studio` | Browse the database |
 
 ## Folder layout

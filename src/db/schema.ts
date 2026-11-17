@@ -33,7 +33,7 @@ export const provinces = pgTable("provinces", {
   // Lower numbers are shown first (popular provinces first on the Home page).
   sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 // Kinds of places: temples, waterfalls, beaches, mountains, food. Admins manage these.
 export const categories = pgTable("categories", {
@@ -43,7 +43,7 @@ export const categories = pgTable("categories", {
   nameKm: text("name_km").notNull(),
   sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 // ---------- People ----------
 
@@ -58,7 +58,7 @@ export const users = pgTable("users", {
   email: text(),
   role: userRole().notNull().default("user"),
   ...timestamps,
-});
+}).enableRLS();
 
 // ---------- Places ----------
 
@@ -108,7 +108,7 @@ export const places = pgTable(
     index("places_category_idx").on(t.categoryId),
     index("places_best_months_idx").using("gin", t.bestMonths),
   ],
-);
+).enableRLS();
 
 // Photos of a place. Only the URL is stored (images live in Cloudflare R2).
 // postId is added when user posts arrive.
@@ -126,7 +126,7 @@ export const photos = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("photos_place_idx").on(t.placeId)],
-);
+).enableRLS();
 
 export const contactType = pgEnum("contact_type", ["telegram", "phone"]);
 
@@ -149,7 +149,7 @@ export const guides = pgTable(
     ...timestamps,
   },
   (t) => [index("guides_place_idx").on(t.placeId)],
-);
+).enableRLS();
 
 // ---------- Community ----------
 
@@ -166,7 +166,7 @@ export const likes = pgTable(
   },
   // One like per person per place.
   (t) => [primaryKey({ columns: [t.placeId, t.userId] })],
-);
+).enableRLS();
 
 export const saves = pgTable(
   "saves",
@@ -180,7 +180,7 @@ export const saves = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.placeId, t.userId] }), index("saves_user_idx").on(t.userId)],
-);
+).enableRLS();
 
 export const commentStatus = pgEnum("comment_status", ["published", "hidden"]);
 
@@ -199,7 +199,7 @@ export const comments = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("comments_place_idx").on(t.placeId, t.createdAt)],
-);
+).enableRLS();
 
 export const reportReason = pgEnum("report_reason", ["wrong_info", "closed", "unsafe", "duplicate", "other"]);
 export const reportStatus = pgEnum("report_status", ["open", "resolved"]);
@@ -221,7 +221,7 @@ export const reports = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("reports_status_idx").on(t.status, t.createdAt)],
-);
+).enableRLS();
 
 export type ProvinceRow = typeof provinces.$inferSelect;
 export type CategoryRow = typeof categories.$inferSelect;
