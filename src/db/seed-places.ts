@@ -230,7 +230,7 @@ export const seedPlaces: SeedPlace[] = [
     lng: 104.0286,
     bestMonths: [11, 12, 1, 2],
     avoidMonths: [],
-    likesCount: 1530,
+    likesCount: 620,
     addedBy: "dara",
     hoursAgo: 24 * 3,
     details: {

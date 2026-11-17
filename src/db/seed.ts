@@ -69,7 +69,7 @@ export async function seedSamplePlaces(db: Db) {
       status: "published" as const,
     };
     // On a re-run, update the facts but keep likes, creation time and author as they are.
-    const { slug: _slug, ...updatable } = values;
+    const updatable = Object.fromEntries(Object.entries(values).filter(([key]) => key !== "slug"));
     await db
       .insert(schema.places)
       .values({

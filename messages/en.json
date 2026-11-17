@@ -18,7 +18,34 @@
       "loading": "Loading provinces…",
       "empty": "No provinces yet. Please check back soon.",
       "error": "We couldn't load the provinces. Please check your connection and try again.",
-      "retry": "Try again"
+      "retry": "Try again",
+      "allProvinces": "All {count}",
+      "seeOnMap": "See on map"
+    },
+    "search": {
+      "label": "Search places",
+      "placeholder": "Where do you want to explore?",
+      "season": "Season",
+      "anySeason": "Any season",
+      "bestIn": "Best in {month}",
+      "button": "Search"
+    },
+    "best": {
+      "title": "Best this month",
+      "subtitle": "In season now, {month}",
+      "empty": "No places are at their best this month yet.",
+      "error": "We couldn't load the places. Please check your connection and try again.",
+      "loading": "Loading places…",
+      "viewAll": "See all places"
+    },
+    "recent": {
+      "title": "Recently added by the community",
+      "addedBy": "Added by {name} · {time}",
+      "addedByUnknown": "Added {time}",
+      "seeMore": "See more new places",
+      "empty": "No new places yet.",
+      "error": "We couldn't load the new places. Please try again.",
+      "loading": "Loading new places…"
     }
   },
   "Shell": {
@@ -31,5 +58,14 @@
     "comingSoon": "Coming soon",
     "comingSoonBody": "We are building this page. Please check back soon.",
     "backHome": "Back to Explore"
+  },
+  "Common": {
+    "retry": "Try again",
+    "likes": "{count, plural, one {# like} other {# likes}}",
+    "error": "Something went wrong. Please try again."
+  },
+  "Provinces": {
+    "title": "All provinces",
+    "subtitle": "Pick a province to see its places."
   }
 }

@@ -1,38 +1,40 @@
-import { Droplets, Landmark, MapPin, Mountain, Soup, TreePalm, type LucideIcon } from "lucide-react";
+import { Map } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { CategoryIcon } from "@/components/places/category-icon";
+import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import type { Category } from "@/lib/validation/reference";
 
-// Icons belong to the UI, not the database, so they are matched by slug here.
-// A new category without an icon gets a map pin.
-const ICONS: Record<string, LucideIcon> = {
-  temples: Landmark,
-  waterfalls: Droplets,
-  beaches: TreePalm,
-  mountains: Mountain,
-  food: Soup,
-};
-
 type Props = { categories: Category[]; locale: Locale };
 
-// Pill-shaped category chips. Scroll sideways on phone, wrap into one row on desktop.
-// Filtering by category arrives with the Places slice.
+// Pill-shaped category chips. Each opens the Map page filtered to that category.
+// They scroll sideways on phone. "See on map" sits at the end (right side on desktop).
 export function CategoryChips({ categories, locale }: Props) {
+  const t = useTranslations("Home.explore");
+
   return (
-    <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:gap-3">
-      {categories.map((category) => {
-        const Icon = ICONS[category.slug] ?? MapPin;
-        return (
-          <li
-            key={category.id}
-            data-testid="category-chip"
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-secondary px-4 font-medium text-secondary-foreground"
-          >
-            <Icon aria-hidden className="size-4" />
-            {category.name[locale]}
+    <div className="flex items-center justify-between gap-4">
+      <ul className="-mx-4 flex flex-1 gap-2 overflow-x-auto px-4 pb-1 sm:gap-3 md:mx-0 md:px-0">
+        {categories.map((category) => (
+          <li key={category.id} data-testid="category-chip" className="shrink-0">
+            <Link
+              href={{ pathname: "/map", query: { category: category.slug } }}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-secondary px-4 font-medium text-secondary-foreground transition-colors hover:bg-secondary/70"
+            >
+              <CategoryIcon slug={category.slug} aria-hidden className="size-4" />
+              {category.name[locale]}
+            </Link>
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+      <Link
+        href="/map"
+        className="hidden min-h-11 shrink-0 items-center gap-2 rounded-full border-2 border-primary px-4 font-semibold text-primary transition-colors hover:bg-secondary md:inline-flex"
+      >
+        <Map aria-hidden className="size-4" />
+        {t("seeOnMap")}
+      </Link>
+    </div>
   );
 }
 
