@@ -11,7 +11,15 @@
     "language": "ភាសាខ្មែរ"
   },
   "Home": {
-    "title": "Where do you want to go in Cambodia?",
-    "subtitle": "Discover places, the best time to visit and how to get there."
+    "title": "Find your next place in Cambodia",
+    "subtitle": "Discover places, the best time to visit and how to get there.",
+    "explore": {
+      "provincesTitle": "Explore by province",
+      "categoriesLabel": "Categories",
+      "loading": "Loading provinces…",
+      "empty": "No provinces yet. Please check back soon.",
+      "error": "We couldn't load the provinces. Please check your connection and try again.",
+      "retry": "Try again"
+    }
   }
 }

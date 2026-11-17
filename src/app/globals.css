@@ -33,6 +33,11 @@
   /* Laterite red-orange: "Add a place", like hearts, links, selected pin, "Open in Google Maps". */
   --color-laterite: var(--laterite);
   --color-laterite-foreground: var(--laterite-foreground);
+  /* Pale tints used as photo placeholders until real photos exist. */
+  --color-tint-clay: var(--tint-clay);
+  --color-tint-sage: var(--tint-sage);
+  --color-tint-moss: var(--tint-moss);
+  --color-tint-sand: var(--tint-sand);
 
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: calc(var(--radius) * 0.75);
@@ -58,6 +63,10 @@
   --accent-foreground: #1b2a22;
   --laterite: #b8461f;
   --laterite-foreground: #fffdf9;
+  --tint-clay: #e3c6b4;
+  --tint-sage: #c5d7c7;
+  --tint-moss: #b8ccb7;
+  --tint-sand: #e8dcc0;
   --destructive: #b42318;
   --border: #e6dccb;
   --input: #e6dccb;
