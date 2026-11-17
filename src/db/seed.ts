@@ -2,7 +2,7 @@ import { and, inArray, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
 import { categorySeed, provinceSeed, type SeedItem } from "./seed-data";
-import { seedComments, seedGuides, seedPlaces, seedUsers } from "./seed-places";
+import { seedComments, seedGuides, seedPlaces, seedPosts, seedUsers } from "./seed-places";
 
 type Db = PostgresJsDatabase<typeof schema>;
 
@@ -100,6 +100,22 @@ export async function seedSamplePlaces(db: Db) {
       userId: userId[c.user],
       body: c.body,
       createdAt: sql`now() - make_interval(hours => ${c.hoursAgo})` as unknown as Date,
+    })),
+  );
+
+  // Sample posts are replaced on every run too (their photos go with them).
+  await db
+    .delete(schema.posts)
+    .where(and(inArray(schema.posts.placeId, seededPlaceIds), inArray(schema.posts.userId, Object.values(userId))));
+  await db.insert(schema.posts).values(
+    seedPosts.map((p) => ({
+      placeId: placeId[p.place],
+      userId: userId[p.user],
+      story: p.story,
+      rating: p.rating,
+      visitedAt: p.visitedAt,
+      status: "published" as const,
+      createdAt: sql`now() - make_interval(days => ${p.daysAgo})` as unknown as Date,
     })),
   );
 

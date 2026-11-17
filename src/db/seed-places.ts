@@ -250,3 +250,39 @@ export const seedGuides = [
   { place: "bou-sra-waterfall", name: "Demo guide A", tourEn: "Day trip with transport", tourKm: "ដំណើរមួយថ្ងៃ រួមទាំងការដឹកជញ្ជូន", priceText: null, contactType: "telegram" as const, contactValue: "demo_guide_tostov" },
   { place: "bou-sra-waterfall", name: "Demo guide B", tourEn: "Forest walk and falls", tourKm: "ដើរព្រៃ និងទឹកធ្លាក់", priceText: null, contactType: "phone" as const, contactValue: "+855000000000" },
 ];
+
+// Sample posts (people's experiences). Ratings: Bou Sra 5 and 4 (average 4.5).
+export const seedPosts = [
+  {
+    place: "bou-sra-waterfall",
+    user: "vanna",
+    rating: 5,
+    visitedAt: "2026-11-08",
+    daysAgo: 8,
+    story: "We went on a Saturday morning in early November. The water was loud and strong, and we had the upper tier almost to ourselves. Bring shoes with grip, the steps are wet.",
+  },
+  {
+    place: "bou-sra-waterfall",
+    user: "emma",
+    rating: 4,
+    visitedAt: "2026-09-20",
+    daysAgo: 58,
+    story: "Beautiful place and easy to reach by scooter from Sen Monorom. It was crowded after lunch, so go early. Great food stalls near the parking.",
+  },
+  {
+    place: "angkor-wat",
+    user: "dara",
+    rating: 5,
+    visitedAt: "2026-11-02",
+    daysAgo: 15,
+    story: "Sunrise at the main temple was worth waking up at 4:30. Cool air, soft light and not too many people if you walk around to the back of the pond.",
+  },
+  {
+    place: "long-set-beach",
+    user: "tom",
+    rating: 4,
+    visitedAt: "2026-10-18",
+    daysAgo: 30,
+    story: "Quiet white sand and clear water. The boat from Sihanoukville was smooth. There is not much shade, so bring a hat and water.",
+  },
+];

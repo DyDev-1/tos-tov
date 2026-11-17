@@ -1,5 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
+  check,
+  date,
   foreignKey,
   geometry,
   index,
@@ -121,11 +123,41 @@ export const photos = pgTable(
       .references(() => places.id, { onDelete: "cascade" }),
     url: text().notNull(),
     alt: text(),
+    // Set when the photo belongs to a user's post. null = a photo of the place itself (admin or "Add a place").
+    postId: integer("post_id").references(() => posts.id, { onDelete: "cascade" }),
     sortOrder: integer("sort_order").notNull().default(0),
     createdById: integer("created_by_id").references(() => users.id),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("photos_place_idx").on(t.placeId)],
+  (t) => [index("photos_place_idx").on(t.placeId), index("photos_post_idx").on(t.postId)],
+).enableRLS();
+
+// A Post is one person's experience of a place (a Place exists once, many Posts belong to it).
+export const postStatus = pgEnum("post_status", ["pending", "published", "hidden"]);
+
+export const posts = pgTable(
+  "posts",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    placeId: integer("place_id")
+      .notNull()
+      .references(() => places.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    story: text().notNull(),
+    rating: integer().notNull(),
+    // The day the person visited (not the day they wrote the post).
+    visitedAt: date("visited_at", { mode: "string" }).notNull(),
+    // pending = waiting for an admin, published = visible, hidden = removed by an admin.
+    status: postStatus().notNull().default("pending"),
+    ...timestamps,
+  },
+  (t) => [
+    index("posts_place_status_idx").on(t.placeId, t.status, t.createdAt),
+    index("posts_user_idx").on(t.userId, t.createdAt),
+    check("posts_rating_range", sql`${t.rating} between 1 and 5`),
+  ],
 ).enableRLS();
 
 export const contactType = pgEnum("contact_type", ["telegram", "phone"]);
@@ -230,3 +262,4 @@ export type PlaceRow = typeof places.$inferSelect;
 export type PhotoRow = typeof photos.$inferSelect;
 export type GuideRow = typeof guides.$inferSelect;
 export type CommentRow = typeof comments.$inferSelect;
+export type PostRow = typeof posts.$inferSelect;

@@ -1,7 +1,8 @@
 import "server-only";
-import { and, asc, count, desc, eq, ilike, inArray, or, arrayContains, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNull, or, arrayContains, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, comments, guides, photos, places, provinces, users } from "@/db/schema";
+import { categories, comments, guides, photos, places, posts, provinces, users } from "@/db/schema";
+import { getRatingSummary } from "@/lib/services/posts";
 import type { ListPlacesQuery, PlaceCard, PlaceDetail } from "@/lib/validation/places";
 
 // Places: reading them for lists, the map and the place page.
@@ -79,11 +80,14 @@ function escapeLike(text: string) {
 
 async function coversFor(placeIds: number[]): Promise<Map<number, Cover>> {
   if (placeIds.length === 0) return new Map();
+  // The cover is a photo of the place itself, or else one from a published post. Photos of posts
+  // that are still waiting for an admin are never shown.
   const rows = await db
     .select({ placeId: photos.placeId, url: photos.url, alt: photos.alt })
     .from(photos)
-    .where(inArray(photos.placeId, placeIds))
-    .orderBy(asc(photos.sortOrder), asc(photos.id));
+    .leftJoin(posts, eq(photos.postId, posts.id))
+    .where(and(inArray(photos.placeId, placeIds), or(isNull(photos.postId), eq(posts.status, "published"))))
+    .orderBy(sql`${photos.postId} is not null`, asc(photos.sortOrder), asc(photos.id));
   const covers = new Map<number, Cover>();
   for (const row of rows) if (!covers.has(row.placeId)) covers.set(row.placeId, { url: row.url, alt: row.alt });
   return covers;
@@ -159,17 +163,19 @@ export async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> 
     .limit(1);
   if (!row) return null;
 
-  const [photoRows, guideRows, commentCount] = await Promise.all([
+  const [photoRows, guideRows, commentCount, rating] = await Promise.all([
     db
       .select({ id: photos.id, url: photos.url, alt: photos.alt })
       .from(photos)
-      .where(eq(photos.placeId, row.id))
-      .orderBy(asc(photos.sortOrder), asc(photos.id)),
+      .leftJoin(posts, eq(photos.postId, posts.id))
+      .where(and(eq(photos.placeId, row.id), or(isNull(photos.postId), eq(posts.status, "published"))))
+      .orderBy(sql`${photos.postId} is not null`, asc(photos.sortOrder), asc(photos.id)),
     db.select().from(guides).where(eq(guides.placeId, row.id)).orderBy(asc(guides.id)),
     db
       .select({ total: count() })
       .from(comments)
       .where(and(eq(comments.placeId, row.id), eq(comments.status, "published"))),
+    getRatingSummary(row.id),
   ]);
 
   const card = toPlaceCard(row as CardRow, photoRows[0] ? { url: photoRows[0].url, alt: photoRows[0].alt } : null);
@@ -189,6 +195,7 @@ export async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> 
       contactValue: g.contactValue,
     })),
     commentsCount: commentCount[0]?.total ?? 0,
+    rating,
     updatedAt: row.updatedAt.toISOString(),
   };
 }

@@ -30,3 +30,20 @@ export function timeAgo(date: Date | string, locale: Locale, now: Date = new Dat
 export function formatDate(date: Date | string, locale: Locale): string {
   return new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: TIME_ZONE }).format(new Date(date));
 }
+
+// Today's date in Cambodia as YYYY-MM-DD, for "date visited" (a visitor abroad should still get Cambodia's today).
+export function todayInCambodia(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+}
+
+// Is this a real calendar day (YYYY-MM-DD) that is not in the future and not older than 60 years?
+export function isValidVisitDate(value: string, now: Date = new Date()): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  // 31 February becomes 3 March in Date, so compare the parts again.
+  if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) return false;
+  const today = todayInCambodia(now);
+  const oldest = `${Number(today.slice(0, 4)) - 60}${today.slice(4)}`;
+  return value <= today && value >= oldest;
+}

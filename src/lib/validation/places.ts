@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { placeDetailsSchema } from "./place-details";
+import { ratingSummarySchema } from "./posts";
 import { localizedNameSchema } from "./reference";
 
 // Public shapes for places, shared by the API and the frontend.
@@ -44,6 +45,7 @@ export const placeDetailSchema = placeCardSchema.extend({
   photos: z.array(z.object({ id: z.number().int(), url: z.string(), alt: z.string().nullable() })),
   guides: z.array(guideSchema),
   commentsCount: z.number().int(),
+  rating: ratingSummarySchema,
   updatedAt: z.string(),
 });
 export type PlaceDetail = z.infer<typeof placeDetailSchema>;
