@@ -53,6 +53,11 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      - name: Set up database (migrate + seed)
+        run: |
+          npm run db:migrate
+          npm run db:seed
+
       - name: Build
         run: npm run build
 
