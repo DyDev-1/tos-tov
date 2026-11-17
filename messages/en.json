@@ -7,8 +7,7 @@
     "explore": "Explore",
     "map": "Map",
     "saved": "Saved",
-    "logIn": "Log in",
-    "language": "ភាសាខ្មែរ"
+    "logIn": "Log in"
   },
   "Home": {
     "title": "Find your next place in Cambodia",
@@ -19,7 +18,311 @@
       "loading": "Loading provinces…",
       "empty": "No provinces yet. Please check back soon.",
       "error": "We couldn't load the provinces. Please check your connection and try again.",
-      "retry": "Try again"
+      "retry": "Try again",
+      "allProvinces": "All {count}",
+      "seeOnMap": "See on map"
+    },
+    "search": {
+      "label": "Search places",
+      "placeholder": "Where do you want to explore?",
+      "season": "Season",
+      "anySeason": "Any season",
+      "bestIn": "Best in {month}",
+      "button": "Search"
+    },
+    "best": {
+      "title": "Best this month",
+      "subtitle": "In season now, {month}",
+      "empty": "No places are at their best this month yet.",
+      "error": "We couldn't load the places. Please check your connection and try again.",
+      "loading": "Loading places…",
+      "viewAll": "See all places"
+    },
+    "recent": {
+      "title": "Recently added by the community",
+      "addedBy": "Added by {name} · {time}",
+      "addedByUnknown": "Added {time}",
+      "seeMore": "See more new places",
+      "empty": "No new places yet.",
+      "error": "We couldn't load the new places. Please try again.",
+      "loading": "Loading new places…"
     }
+  },
+  "Shell": {
+    "skipToContent": "Skip to content",
+    "mainNav": "Main navigation",
+    "tabBar": "Main tabs",
+    "profile": "Profile",
+    "addPlace": "Add a place",
+    "language": "Language",
+    "comingSoon": "Coming soon",
+    "comingSoonBody": "We are building this page. Please check back soon.",
+    "backHome": "Back to Explore"
+  },
+  "Common": {
+    "retry": "Try again",
+    "likes": "{count, plural, one {# like} other {# likes}}",
+    "error": "Something went wrong. Please try again."
+  },
+  "Provinces": {
+    "title": "All provinces",
+    "subtitle": "Pick a province to see its places."
+  },
+  "Place": {
+    "breadcrumb": "Breadcrumb",
+    "explore": "Explore",
+    "inSeason": "In season now",
+    "like": "Like",
+    "unlike": "Remove like",
+    "save": "Save",
+    "saved": "Saved",
+    "comments": "{count, plural, one {# comment} other {# comments}}",
+    "back": "Back",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
+    "morePhotos": "+{count} photos",
+    "noPhotos": "No photos yet",
+    "actionError": "Could not save that. Please try again.",
+    "need": {
+      "title": "What you need",
+      "entryFee": "Entry fee",
+      "cambodians": "Cambodians",
+      "foreigners": "Foreigners",
+      "free": "Free",
+      "notListed": "Not listed yet",
+      "ticket": "Ticket or pass",
+      "dressCode": "Dress code",
+      "whatToBring": "What to bring",
+      "difficulty": "Difficulty"
+    },
+    "season": {
+      "title": "Best season",
+      "best": "Best months",
+      "avoid": "Avoid",
+      "now": "Now",
+      "avoidDefault": "Best to avoid: {months}.",
+      "bestMonth": "best month",
+      "avoidMonth": "month to avoid",
+      "currentMonth": "this month",
+      "none": "Best months are not listed yet."
+    },
+    "practical": {
+      "title": "Practical",
+      "openingHours": "Opening hours",
+      "timeNeeded": "Time needed",
+      "facilities": "Facilities"
+    },
+    "gettingThere": {
+      "title": "Getting there",
+      "nearestTown": "Nearest town",
+      "transport": "Transport",
+      "road": "Road",
+      "openMaps": "Open in Google Maps",
+      "mapLabel": "Map showing {name}"
+    },
+    "tours": {
+      "title": "Local tours and guides",
+      "telegram": "Telegram",
+      "call": "Call",
+      "telegramFor": "{name} on Telegram",
+      "callFor": "Call {name}",
+      "note": "You contact guides directly. Booking and payment happen outside this site.",
+      "empty": "No local guides listed yet."
+    },
+    "trust": {
+      "postedBy": "Posted by {name}",
+      "lastUpdated": "Last updated {date}",
+      "report": "Report a problem with this place"
+    },
+    "report": {
+      "title": "Report a problem",
+      "reason": "What is wrong?",
+      "reasons": {
+        "wrong_info": "Information is wrong",
+        "closed": "Place is closed or gone",
+        "unsafe": "Unsafe",
+        "duplicate": "Duplicate of another place",
+        "other": "Something else"
+      },
+      "message": "Tell us more (optional)",
+      "send": "Send report",
+      "sending": "Sending…",
+      "cancel": "Cancel",
+      "thanks": "Thank you. An admin will take a look.",
+      "error": "Could not send your report. Please try again.",
+      "logIn": "Log in to send a report"
+    },
+    "commentsSection": {
+      "title": "Comments",
+      "label": "Write a comment",
+      "placeholder": "Been here recently? Share a tip",
+      "post": "Post",
+      "posting": "Posting…",
+      "empty": "No comments yet. Be the first to share a tip.",
+      "loadMore": "Show more comments",
+      "logIn": "Log in to comment",
+      "error": "Could not post your comment. Please try again.",
+      "rateLimited": "You are commenting too fast. Please wait a minute."
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "body": "We could not find that page. It may have moved or been removed.",
+    "back": "Back to Explore"
+  },
+  "Map": {
+    "title": "Map",
+    "provinceLabel": "Province",
+    "allProvinces": "All provinces",
+    "categoryLabel": "Category",
+    "allCategories": "All categories",
+    "seasonLabel": "Season",
+    "anySeason": "Any season",
+    "bestIn": "Best in {month}",
+    "count": "{count, plural, one {# place matches} other {# places match}}",
+    "searchChip": "Search: {q}",
+    "removeSearch": "Remove search",
+    "showList": "Show list ({count})",
+    "showMap": "Show map",
+    "listLabel": "Matching places",
+    "mapLabel": "Map of Cambodia with the matching places as pins",
+    "empty": "No places match these filters.",
+    "clear": "Clear filters",
+    "error": "We couldn't load the places. Please check your connection and try again.",
+    "loading": "Loading places…",
+    "viewPlace": "View place",
+    "directions": "Directions",
+    "inSeason": "In season now",
+    "selectedPlace": "Selected place"
+  },
+  "Auth": {
+    "title": "Join to share the places you find",
+    "body": "Browsing is open to everyone. An account lets you add places, like, save and comment.",
+    "titleLogIn": "Welcome back",
+    "bodyLogIn": "Log in to add places, like, save and comment.",
+    "tabs": "Sign up or log in",
+    "signUp": "Sign up",
+    "logIn": "Log in",
+    "keepBrowsing": "Keep browsing without an account",
+    "loading": "Loading the form…",
+    "loadError": "The form could not load. Please check your connection and reload the page."
+  },
+  "AddPlace": {
+    "title": "Add a place",
+    "intro": "Share somewhere you have been. Only the first four steps are required.",
+    "cancel": "Cancel",
+    "optional": "(optional)",
+    "loginGate": {
+      "title": "Log in to add a place",
+      "body": "Adding places needs an account, so we can keep the community trustworthy.",
+      "logIn": "Log in",
+      "signUp": "Sign up",
+      "loading": "Loading…"
+    },
+    "photos": {
+      "label": "1. Photos",
+      "add": "Add photos",
+      "hint": "Photos are made smaller before upload, so they send on slow connections.",
+      "cover": "Cover",
+      "remove": "Remove photo {n}",
+      "count": "{count} of {max} photos",
+      "preview": "Photo {n}",
+      "tooMany": "You can add up to {max} photos.",
+      "notImage": "{name} is not an image.",
+      "tooBig": "{name} is larger than 10 MB.",
+      "cannotRead": "{name} could not be read. Please try another photo.",
+      "processing": "Preparing photos…"
+    },
+    "name": {
+      "label": "2. Name of the place",
+      "placeholder": "For example: Bou Sra Waterfall"
+    },
+    "province": {
+      "label": "3. Province",
+      "placeholder": "Choose a province"
+    },
+    "category": {
+      "label": "Category",
+      "placeholder": "Choose a category"
+    },
+    "pin": {
+      "label": "4. Map pin",
+      "mapLabel": "Map: tap or drag the pin to move it",
+      "hint": "Tap the map or drag the pin to the exact spot.",
+      "useMyLocation": "Use my location",
+      "locating": "Finding you…",
+      "locationDenied": "We could not get your location. Tap the map instead.",
+      "outside": "This spot is outside Cambodia. Please move the pin.",
+      "set": "Pin set: {lat}, {lng}"
+    },
+    "description": {
+      "label": "Description",
+      "placeholder": "What is it like? Why go?"
+    },
+    "months": {
+      "label": "Best months to visit"
+    },
+    "feeKhr": {
+      "label": "Entry fee, Cambodians",
+      "placeholder": "Riel, or 0 if free"
+    },
+    "feeUsd": {
+      "label": "Entry fee, foreigners",
+      "placeholder": "US dollars, or 0 if free"
+    },
+    "bring": {
+      "label": "What to bring, and how to get there",
+      "placeholder": "Shoes, water, road condition, transport"
+    },
+    "similar": {
+      "title": "Is it one of these?",
+      "body": "Places with a similar name or close to your pin. If yours is different, carry on.",
+      "view": "View place",
+      "away": "{meters} m away",
+      "opensNew": "opens in a new tab"
+    },
+    "duplicate": {
+      "title": "A place like this may already exist",
+      "body": "{name} is at the same spot or has the same name in this province.",
+      "view": "View {name}",
+      "anyway": "Mine is different, add it anyway"
+    },
+    "submit": {
+      "send": "Send place",
+      "sending": "Sending…",
+      "uploading": "Uploading photo {current} of {total}…",
+      "note": "An admin checks new places before they appear. You can edit it later.",
+      "draftSaved": "Draft saved on this phone"
+    },
+    "errors": {
+      "summary": "Please fix the items marked below.",
+      "name": "Please enter the name of the place.",
+      "province": "Please choose a province.",
+      "category": "Please choose a category.",
+      "photos": "Please add at least one photo.",
+      "pin": "Please move the pin to the place.",
+      "fee": "Please use a whole number, 0 or more.",
+      "feeUsd": "Please use a number, 0 or more.",
+      "uploadsOff": "Photo uploads are not set up yet. Please try again later.",
+      "uploadFailed": "A photo could not be uploaded. Please check your connection and try again.",
+      "rateLimited": "You added several places in a short time. Please try again later.",
+      "failed": "We could not send your place. Please try again.",
+      "loginExpired": "Please log in again to send your place."
+    },
+    "success": {
+      "title": "Thank you!",
+      "body": "Your place was sent. An admin will check it before it appears.",
+      "live": "Your place is live.",
+      "view": "View the place",
+      "home": "Back to Explore",
+      "another": "Add another place"
+    }
+  },
+  "Saved": {
+    "signedOutTitle": "Log in to see your saved places",
+    "signedOutBody": "Tap Save on any place and it will wait for you here.",
+    "empty": "You have not saved any places yet.",
+    "emptyHint": "Open a place and tap Save, and it will show up here.",
+    "explore": "Explore places",
+    "count": "{count, plural, one {# saved place} other {# saved places}}"
   }
 }

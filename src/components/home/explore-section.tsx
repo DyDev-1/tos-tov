@@ -36,7 +36,19 @@ export async function ExploreSection({ locale }: { locale: Locale }) {
   const [provinces, categories] = data;
 
   return (
-    <SectionShell title={t("provincesTitle")}>
+    <SectionShell
+      title={t("provincesTitle")}
+      action={
+        provinces.length > 0 && (
+          <Link
+            href="/provinces"
+            className="inline-flex min-h-11 shrink-0 items-center font-semibold text-laterite underline-offset-4 hover:underline"
+          >
+            {t("allProvinces", { count: provinces.length })}
+          </Link>
+        )
+      }
+    >
       {provinces.length === 0 ? (
         <p className="rounded-2xl bg-secondary p-4 text-muted-foreground">{t("empty")}</p>
       ) : (
@@ -67,12 +79,15 @@ export async function ExploreSectionSkeleton({ locale }: { locale: Locale }) {
   );
 }
 
-function SectionShell({ title, children }: { title: string; children: React.ReactNode }) {
+function SectionShell({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
     <section aria-labelledby="explore-provinces">
-      <h2 id="explore-provinces" className="mb-4 font-heading text-xl font-bold sm:text-2xl">
-        {title}
-      </h2>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <h2 id="explore-provinces" className="font-heading text-xl font-bold sm:text-2xl">
+          {title}
+        </h2>
+        {action}
+      </div>
       {children}
     </section>
   );
