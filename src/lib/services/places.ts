@@ -192,3 +192,37 @@ export async function getPlaceBySlug(slug: string): Promise<PlaceDetail | null> 
     updatedAt: row.updatedAt.toISOString(),
   };
 }
+
+// Published places close to a point, nearest first. Used by "Add a place" to ask
+// "is it one of these?" before a new place is created, so one place never exists twice.
+// (The distance uses the earth's curve, in metres. With a few hundred places no extra index is needed.)
+export async function listNearbyPlaces(options: {
+  lat: number;
+  lng: number;
+  radiusMeters: number;
+  limit: number;
+}): Promise<{ place: PlaceCard; distanceMeters: number }[]> {
+  const point = sql`ST_SetSRID(ST_MakePoint(${options.lng}, ${options.lat}), 4326)::geography`;
+  const distance = sql<number>`ST_Distance(${places.location}::geography, ${point})`;
+
+  const rows = await db
+    .select({ ...cardColumns, distance })
+    .from(places)
+    .innerJoin(provinces, eq(places.provinceId, provinces.id))
+    .innerJoin(categories, eq(places.categoryId, categories.id))
+    .leftJoin(users, eq(places.createdById, users.id))
+    .where(
+      and(
+        eq(places.status, "published"),
+        sql`ST_DWithin(${places.location}::geography, ${point}, ${options.radiusMeters})`,
+      ),
+    )
+    .orderBy(distance)
+    .limit(options.limit);
+
+  const covers = await coversFor(rows.map((r) => r.id));
+  return rows.map((row) => ({
+    place: toPlaceCard(row as CardRow, covers.get(row.id) ?? null),
+    distanceMeters: Math.round(Number(row.distance)),
+  }));
+}
