@@ -67,5 +67,106 @@
   "Provinces": {
     "title": "All provinces",
     "subtitle": "Pick a province to see its places."
+  },
+  "Place": {
+    "breadcrumb": "Breadcrumb",
+    "explore": "Explore",
+    "inSeason": "In season now",
+    "like": "Like",
+    "unlike": "Remove like",
+    "save": "Save",
+    "saved": "Saved",
+    "comments": "{count, plural, one {# comment} other {# comments}}",
+    "back": "Back",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
+    "morePhotos": "+{count} photos",
+    "noPhotos": "No photos yet",
+    "actionError": "Could not save that. Please try again.",
+    "need": {
+      "title": "What you need",
+      "entryFee": "Entry fee",
+      "cambodians": "Cambodians",
+      "foreigners": "Foreigners",
+      "free": "Free",
+      "notListed": "Not listed yet",
+      "ticket": "Ticket or pass",
+      "dressCode": "Dress code",
+      "whatToBring": "What to bring",
+      "difficulty": "Difficulty"
+    },
+    "season": {
+      "title": "Best season",
+      "best": "Best months",
+      "avoid": "Avoid",
+      "now": "Now",
+      "avoidDefault": "Best to avoid: {months}.",
+      "bestMonth": "best month",
+      "avoidMonth": "month to avoid",
+      "currentMonth": "this month",
+      "none": "Best months are not listed yet."
+    },
+    "practical": {
+      "title": "Practical",
+      "openingHours": "Opening hours",
+      "timeNeeded": "Time needed",
+      "facilities": "Facilities"
+    },
+    "gettingThere": {
+      "title": "Getting there",
+      "nearestTown": "Nearest town",
+      "transport": "Transport",
+      "road": "Road",
+      "openMaps": "Open in Google Maps",
+      "mapLabel": "Map showing {name}"
+    },
+    "tours": {
+      "title": "Local tours and guides",
+      "telegram": "Telegram",
+      "call": "Call",
+      "telegramFor": "{name} on Telegram",
+      "callFor": "Call {name}",
+      "note": "You contact guides directly. Booking and payment happen outside this site.",
+      "empty": "No local guides listed yet."
+    },
+    "trust": {
+      "postedBy": "Posted by {name}",
+      "lastUpdated": "Last updated {date}",
+      "report": "Report a problem with this place"
+    },
+    "report": {
+      "title": "Report a problem",
+      "reason": "What is wrong?",
+      "reasons": {
+        "wrong_info": "Information is wrong",
+        "closed": "Place is closed or gone",
+        "unsafe": "Unsafe",
+        "duplicate": "Duplicate of another place",
+        "other": "Something else"
+      },
+      "message": "Tell us more (optional)",
+      "send": "Send report",
+      "sending": "Sending…",
+      "cancel": "Cancel",
+      "thanks": "Thank you. An admin will take a look.",
+      "error": "Could not send your report. Please try again.",
+      "logIn": "Log in to send a report"
+    },
+    "commentsSection": {
+      "title": "Comments",
+      "label": "Write a comment",
+      "placeholder": "Been here recently? Share a tip",
+      "post": "Post",
+      "posting": "Posting…",
+      "empty": "No comments yet. Be the first to share a tip.",
+      "loadMore": "Show more comments",
+      "logIn": "Log in to comment",
+      "error": "Could not post your comment. Please try again.",
+      "rateLimited": "You are commenting too fast. Please wait a minute."
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "body": "We could not find that page. It may have moved or been removed.",
+    "back": "Back to Explore"
   }
 }

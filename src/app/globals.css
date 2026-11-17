@@ -89,3 +89,31 @@
     cursor: pointer;
   }
 }
+
+/* Map pins (Leaflet). Green round pin; the selected one is bigger and laterite, as in the Map view design. */
+.tt-marker {
+  background: none;
+  border: 0;
+}
+.tt-pin {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+}
+.tt-pin svg {
+  width: 45%;
+  height: 45%;
+}
+.tt-pin--selected {
+  background: var(--laterite);
+  border: 3px solid #fff;
+}
+.leaflet-container {
+  font-family: inherit;
+  background: var(--tint-sage);
+}
