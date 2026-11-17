@@ -100,7 +100,8 @@ export default function LeafletMap({
   const start: [number, number] = pin ? [pin.lat, pin.lng] : markers[0] ? [markers[0].lat, markers[0].lng] : CAMBODIA_CENTER;
 
   return (
-    <div role="region" aria-label={label} className={className}>
+    // "isolate" keeps Leaflet's own layers (z-index up to 1000) inside the map, so they never cover the header or bottom bars.
+    <div role="region" aria-label={label} className={`isolate ${className ?? ""}`}>
       <MapContainer
         center={start}
         zoom={markers.length === 1 || pin ? pinZoom : zoom}

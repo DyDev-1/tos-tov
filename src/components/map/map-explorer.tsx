@@ -73,7 +73,7 @@ export function MapExplorer({ places, month }: { places: PlaceCard[]; month: num
 
       <div
         className={cn(
-          "relative h-[calc(100dvh-17rem)] min-h-[22rem] lg:block lg:h-auto",
+          "relative isolate h-[calc(100dvh-17rem)] min-h-[22rem] lg:block lg:h-auto",
           showingList ? "hidden" : "block",
         )}
       >

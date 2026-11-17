@@ -58,7 +58,7 @@ export function PinPicker({
   return (
     <fieldset aria-invalid={!!error} className="space-y-2">
       <legend className="mb-2 font-bold">{t("label")}</legend>
-      <div className="relative">
+      <div className="relative isolate">
         <CambodiaMap
           label={t("mapLabel")}
           pin={pin}
