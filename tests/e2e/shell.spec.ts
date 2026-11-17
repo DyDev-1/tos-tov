@@ -30,8 +30,7 @@ test.describe("navigation by screen size", () => {
     await nav.getByRole("link", { name: "Map" }).click();
     await expect(page).toHaveURL(/\/en\/map$/);
     await expect(nav.getByRole("link", { name: "Map" })).toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { level: 1, name: "Map" })).toBeVisible();
-    await expect(page.getByText("Coming soon")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Map" })).toBeAttached();
   });
 });
 

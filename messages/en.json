@@ -168,5 +168,30 @@
     "title": "Page not found",
     "body": "We could not find that page. It may have moved or been removed.",
     "back": "Back to Explore"
+  },
+  "Map": {
+    "title": "Map",
+    "provinceLabel": "Province",
+    "allProvinces": "All provinces",
+    "categoryLabel": "Category",
+    "allCategories": "All categories",
+    "seasonLabel": "Season",
+    "anySeason": "Any season",
+    "bestIn": "Best in {month}",
+    "count": "{count, plural, one {# place matches} other {# places match}}",
+    "searchChip": "Search: {q}",
+    "removeSearch": "Remove search",
+    "showList": "Show list ({count})",
+    "showMap": "Show map",
+    "listLabel": "Matching places",
+    "mapLabel": "Map of Cambodia with the matching places as pins",
+    "empty": "No places match these filters.",
+    "clear": "Clear filters",
+    "error": "We couldn't load the places. Please check your connection and try again.",
+    "loading": "Loading places…",
+    "viewPlace": "View place",
+    "directions": "Directions",
+    "inSeason": "In season now",
+    "selectedPlace": "Selected place"
   }
 }
