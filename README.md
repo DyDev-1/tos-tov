@@ -53,6 +53,18 @@ table rights away from Supabase's `anon` and `authenticated` roles. So even if s
 API key, they would see no rows. The app connects as the database owner, which is not affected.
 `npm run db:check` verifies this, and a test fails if a new table forgets row-level security.
 
+## Loading the real places (stage 1 needs 100 to 200)
+
+Fill a spreadsheet with the places and load them all at once, checked row by row, all or nothing:
+
+```bash
+npm run db:import -- data/places.csv --dry-run      # check only
+npm run db:import -- data/places.csv --admin-email=you@example.com
+```
+
+`data/README.md` explains every column and shows how to prepare the file. `data/places.template.csv` is the empty
+spreadsheet to start from.
+
 ## Release stages
 
 The same code runs in every stage (claude.md, "Release stages"). One setting decides what is open to the public.
@@ -111,6 +123,7 @@ the form explains that uploads are not set up yet.
 | `npm run db:migrate` | Apply migrations |
 | `npm run db:seed` | Add provinces, categories and sample places (local only; safe to run again) |
 | `npm run db:seed:reference` | Add provinces and categories only (safe for any database) |
+| `npm run db:import -- file.csv` | Load places from a spreadsheet or JSON file (see `data/README.md`) |
 | `npm run db:check` | Check PostGIS, row-level security and migrations of the database in `DIRECT_URL` |
 | `npm run db:studio` | Browse the database |
 
