@@ -50,7 +50,7 @@ notifications, mobile app, AI recommendations, ads.
 
 - Next.js (App Router) + TypeScript
 - Auth: Clerk
-- PostgreSQL + Drizzle, with PostGIS for location queries
+- PostgreSQL + Drizzle + Supabase, with PostGIS for location queries
 - Tailwind CSS + shadcn/ui
 - Maps: Leaflet or MapLibre with OpenStreetMap tiles. Use an
   "open in Google Maps" link for directions.
