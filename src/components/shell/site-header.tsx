@@ -1,3 +1,4 @@
+import { AdminLink } from "./admin-link";
 import { AuthButton } from "./auth-button";
 import { LanguageToggle } from "./language-toggle";
 import { Logo } from "./logo";
@@ -12,6 +13,7 @@ export function SiteHeader() {
         <Logo />
         <MainNav />
         <div className="flex items-center justify-end gap-3">
+          <AdminLink />
           <LanguageToggle />
           <AuthButton />
         </div>
